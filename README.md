@@ -7,7 +7,7 @@ DatabaseInfo dbinfo = new DatabaseInfo();
 dbinfo.setDriver("com.mysql.jdbc.Driver");
 dbinfo.setPassword("root");
 dbinfo.setUsername("root");
-dbinfo.setUrl("jdbc:mysql://localhost:3306/urs_bak");
+dbinfo.setUrl("jdbc:mysql://localhost:3306/urs");
 dbinfo.setMaxActive(5);
 dbinfo.setMinActive(2);
 
