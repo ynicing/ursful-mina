@@ -1,2 +1,2 @@
 # urs-database
-light operation database, CRED and statistic
+light operation database, CRED and statistic  @ursful.com
