@@ -1,41 +1,41 @@
 # urs-database
-light operation database, CRED and statistic  @ursful.com
+light operation database, CRED and statistic  @ursful.com<br/>
 
-IBaseDao<TestModel> baseDao = new BaseDaoImpl<TestModel>();
+IBaseDao<TestModel> baseDao = new BaseDaoImpl<TestModel>();<br/>
 
 DatabaseInfo dbinfo = new DatabaseInfo();<br/>
-dbinfo.setDriver("com.mysql.jdbc.Driver");
-dbinfo.setPassword("root");
-dbinfo.setUsername("root");
-dbinfo.setUrl("jdbc:mysql://localhost:3306/urs");
-dbinfo.setMaxActive(5);
-dbinfo.setMinActive(2);
+dbinfo.setDriver("com.mysql.jdbc.Driver");<br/>
+dbinfo.setPassword("root");<br/>
+dbinfo.setUsername("root");<br/>
+dbinfo.setUrl("jdbc:mysql://localhost:3306/urs");<br/>
+dbinfo.setMaxActive(5);<br/>
+dbinfo.setMinActive(2);<br/>
 
-ConnectionManager.getManager().init(new BaseDataSource(dbinfo), dbinfo);
+ConnectionManager.getManager().init(new BaseDataSource(dbinfo), dbinfo);<br/>
 
-TestModel model = new TestModel();
-model.setId(UUID.randomUUID().toString());
-model.setCreateDate(new Date());
-model.setName("Hello");
+TestModel model = new TestModel();<br/>
+model.setId(UUID.randomUUID().toString());<br/>
+model.setCreateDate(new Date());<br/>
+model.setName("Hello");<br/>
 
 //insert
-baseDao.save(model);
+baseDao.save(model);<br/>
  
-model.setName("me");
+model.setName("me");<br/>
 
 //update
-baseDao.update(model);
+baseDao.update(model);<br/>
 
-model.setCreateDate(null);
+model.setCreateDate(null);<br/>
 
 //update with null
-baseDao.update(model, true);
+baseDao.update(model, true);<br/>
 
 //delete
-baseDao.delete(model);
+baseDao.delete(model);<br/>
         
-IQuery<TestModel> query = new QueryDaoImpl<TestModel>()
-                .table(TestModel.class)
-                .createQuery("*");
+IQuery<TestModel> query = new QueryDaoImpl<TestModel>()<br/>
+                .table(TestModel.class)<br/>
+                .createQuery("*");<br/>
 //query
-List<TestModel> testModels = baseDao.query(query);
+List<TestModel> testModels = baseDao.query(query);<br/>
