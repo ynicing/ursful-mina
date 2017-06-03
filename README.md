@@ -3,7 +3,7 @@ light operation database, CRED and statistic  @ursful.com
 
 IBaseDao<TestModel> baseDao = new BaseDaoImpl<TestModel>();
 
-DatabaseInfo dbinfo = new DatabaseInfo();
+DatabaseInfo dbinfo = new DatabaseInfo();<br/>
 dbinfo.setDriver("com.mysql.jdbc.Driver");
 dbinfo.setPassword("root");
 dbinfo.setUsername("root");
