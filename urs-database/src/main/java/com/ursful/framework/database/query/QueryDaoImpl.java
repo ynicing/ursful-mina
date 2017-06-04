@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ursful.framework.database.query;
-
 
 import com.ursful.framework.database.ConnectionManager;
 import com.ursful.framework.database.DatabaseType;

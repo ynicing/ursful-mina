@@ -18,7 +18,8 @@ package com.ursful.framework.database;
 import java.util.Map;
 
 public class TableInfo implements Cloneable{
-	
+
+
 	private String name;//Test
 	private String tableName;//t_test
 	private String aliasName;//t

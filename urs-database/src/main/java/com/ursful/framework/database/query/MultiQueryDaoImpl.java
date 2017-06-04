@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ursful.framework.database.query;
-
 
 import com.ursful.framework.database.*;
 import com.ursful.framework.database.page.Page;
 import com.ursful.framework.database.page.Pair;
 
 import java.util.*;
-
 
 public class MultiQueryDaoImpl<T> implements IMultiQueryDao<T>{
 	

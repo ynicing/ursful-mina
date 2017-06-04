@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ursful.framework.database;
 
 import javax.sql.DataSource;
@@ -21,9 +20,6 @@ import java.io.PrintWriter;
 import java.sql.*;
 import java.util.logging.Logger;
 
-/**
- * Created by ynice on 6/3/17.
- */
 public class BaseDataSource implements DataSource{
 
     private DatabaseInfo info;

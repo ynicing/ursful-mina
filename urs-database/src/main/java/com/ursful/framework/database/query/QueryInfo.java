@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ursful.framework.database.query;
 
 import com.ursful.framework.database.page.Page;
@@ -22,8 +21,7 @@ import com.ursful.framework.database.page.Pair;
 import java.util.List;
 
 public class QueryInfo {
-	//private QueryType type;
-	
+
 	private String sql;
 	private Class<?> clazz;//bean? String?
 	Column column;//count? 

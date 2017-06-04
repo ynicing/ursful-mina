@@ -35,32 +35,15 @@ public enum DataType {
 	STRING("String", "java.lang.String"),
 	OBJECT("Object","java.lang.Object"),
 	UNKNOWN("UNKOWN");
-//	Collection
-//	├List
-//	│├LinkedList
-//	│├ArrayList
-//	│└Vector
-//	│　└Stack
-//	└Set
-	
-//	集合只支持[],List,Map
-//  List
-//	Map
-//  []
-	
-	//UNKNOWN("UNKNOWN", "unknown"),
-	//,OBJECT("o","obj","object", "Object","java.lang.Object");
-	
+
 	private String [] types;
-	 
+
 	public String[] getTypes() {
 		return types;
 	}
-
 	public void setTypes(String[] types) {
 		this.types = types;
 	}
-
 	DataType(String... types){
 		this.types = types;
 	}
@@ -78,9 +61,5 @@ public enum DataType {
 		}
 		return result;
 	}
-	
-	public static void main(String[] args) {
-	}
-	
 
 }

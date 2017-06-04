@@ -15,8 +15,6 @@
  */
 package com.ursful.framework.database;
 
-
-
 import com.ursful.framework.database.annotaion.RdColumn;
 import com.ursful.framework.database.annotaion.RdLargeString;
 import com.ursful.framework.database.annotaion.RdTable;
@@ -500,9 +498,14 @@ public class SQLHelperCreator {
 			Object obj = pair.getValue();
 			String largeString = pair.getName();
 			DataType type =  DataType.getDataType(pair.getType());
+
 			switch (type) {
 			case INTEGER:
-				ps.setInt(i + 1, (Integer) obj);
+				if(obj == null){
+                    ps.setInt(i + 1, 0);
+                }else{
+                    ps.setInt(i + 1, (Integer) obj);
+                }
 				break;
 			case STRING:
 				if((obj != null) && "clob".equals(largeString)){
@@ -513,14 +516,29 @@ public class SQLHelperCreator {
 				}
 				break;
 			case DOUBLE:
-				ps.setDouble(i + 1, (Double)obj);
+                if(obj == null){
+                    ps.setDouble(i + 1, 0);
+                }else{
+                    ps.setDouble(i + 1, (Double)obj);
+                }
+
 				break;
 			case FLOAT :
-				ps.setFloat(i + 1, (Float)obj);
+                if(obj == null){
+                    ps.setFloat(i + 1, 0);
+                }else{
+                    ps.setFloat(i + 1, (Float) obj);
+                }
+
 				break;
 			case LONG:
-				ps.setLong(i + 1, (Long)obj);
-				break;
+                if(obj == null){
+                    ps.setLong(i + 1, 0);
+                }else{
+                    ps.setLong(i + 1, (Long) obj);
+                }
+
+                break;
 			case DATE:
                 if(obj == null){
                     ps.setTimestamp(1, null);

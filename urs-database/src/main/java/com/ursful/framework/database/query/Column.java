@@ -15,6 +15,7 @@
  */
 
 package com.ursful.framework.database.query;
+
 public class Column{
 	
 	private String name;

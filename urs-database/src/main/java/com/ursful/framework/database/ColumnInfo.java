@@ -16,7 +16,6 @@
 
 package com.ursful.framework.database;
 
-
 import com.ursful.framework.database.data.DataType;
 
 public class ColumnInfo {

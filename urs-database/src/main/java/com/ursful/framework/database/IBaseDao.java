@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ursful.framework.database;
 
 import com.ursful.framework.database.page.Page;
@@ -21,7 +20,6 @@ import com.ursful.framework.database.query.IQuery;
 import com.ursful.framework.database.query.QueryException;
 
 import java.util.List;
-
 
 public interface IBaseDao<T>{
     T get(T t);

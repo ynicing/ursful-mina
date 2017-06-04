@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ursful.framework.database;
-
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -25,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 public class ConnectionManager{
 	

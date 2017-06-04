@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ursful.framework.database.query;
 
 public interface IQueryDao<T> extends IQuery<T>{
@@ -27,6 +26,5 @@ public interface IQueryDao<T> extends IQuery<T>{
 	IQueryDao<T> orderAsc(String name);
 	IQueryDao<T> createQuery(String... names) throws QueryException;
 	IQueryDao<T> createQuery(Column... columns) throws QueryException;
-	
-	
+
 }

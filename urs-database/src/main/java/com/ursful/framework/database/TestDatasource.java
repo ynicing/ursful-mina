@@ -22,9 +22,6 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
-/**
- * Created by ynice on 6/3/17.
- */
 public class TestDatasource implements DataSource{
 
     @Override

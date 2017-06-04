@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package com.ursful.framework.database.annotaion;
-
 import java.lang.annotation.*;
 
 @Target(ElementType.TYPE)

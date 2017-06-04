@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ursful.framework.database.page;
 
 import java.io.Serializable;
 
 public class Pair<T> implements Serializable{
 	 
-	private static final long serialVersionUID = 617587755877055322L;
+	private static final long serialVersionUID = -1L;
 	
 	private String name;
     private String type;

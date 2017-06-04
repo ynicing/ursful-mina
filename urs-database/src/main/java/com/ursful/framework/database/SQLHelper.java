@@ -23,8 +23,7 @@ public class SQLHelper {
 	
 	private String sql;
 	private List<Pair<Object>> parameters;
-	
- 
+
 	public String getSql() {
 		return sql;
 	}
