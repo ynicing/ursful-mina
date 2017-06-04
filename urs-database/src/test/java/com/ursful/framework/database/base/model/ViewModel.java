@@ -13,32 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ursful.framework.database.base.model;
 
-package com.ursful.framework.database.query;
-public class Order{
-		
-		private Column column;
-		private String order;
-		
-		public Order(Column column, String order){
-			this.order = order;
-			this.column = column;
-		}
-		
-		public Column getColumn() {
-			return column;
-		}
+/**
+ * Created by ynice on 6/4/17.
+ */
+public class ViewModel {
+    private String num;
 
-		public void setColumn(Column column) {
-			this.column = column;
-		}
+    public String getNum() {
+        return num;
+    }
 
-		public String getOrder() {
-			return order;
-		}
-		public void setOrder(String order) {
-			this.order = order;
-		}
-		
-		
-	}
+    public void setNum(String num) {
+        this.num = num;
+    }
+}

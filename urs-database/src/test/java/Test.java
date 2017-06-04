@@ -1,6 +1,9 @@
 import com.ursful.framework.database.*;
 import com.ursful.framework.database.base.model.TestModel;
+import com.ursful.framework.database.base.model.ViewModel;
+import com.ursful.framework.database.query.Column;
 import com.ursful.framework.database.query.IQuery;
+import com.ursful.framework.database.query.MultiQueryDaoImpl;
 import com.ursful.framework.database.query.QueryDaoImpl;
 
 import java.util.Date;
