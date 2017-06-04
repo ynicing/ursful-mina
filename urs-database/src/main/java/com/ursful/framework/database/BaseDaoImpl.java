@@ -95,7 +95,16 @@ public class BaseDaoImpl<T>  implements IBaseDao<T>{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+    @Override
+    public T get(IQuery<T> query) throws QueryException {
+        List<T> list = query(query);
+        if(list.size() > 0){
+            return list.get(0);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
 	public T get(T t) {
 		PreparedStatement ps = null;
 		ResultSet rs = null;

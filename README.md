@@ -32,10 +32,10 @@ IQuery<TestModel> query = new QueryDaoImpl<TestModel>()<br/>
 //查询<br/>
 List<TestModel> testModels = baseDao.query(query);<br/>
 
-//函数使用<br/>
-IMultiQueryDao<TestModel> multiQuery = new MultiQueryDaoImpl<TestModel>();<br/>
-multiQuery.createAliasTable("t", TestModel.class)<br/>
-multiQuery.createQuery(TestModel.class, new Column("sum", "t", TestModel.T_NUMBER, TestModel.T_NUMBER));<br/>
+//函数使用,如 sum <br/>
 
-List<TestModel> m = baseDao.query(dao);<br/>
-System.out.println(m.get(0).getNumber());<br/>
+IQuery<TestModel> query = new QueryDaoImpl<TestModel>()<br/>
+.table(TestModel.class)<br/>
+.createQuery(TestModel.class, new Column("sum", null, TestModel.T_NUMBER, "number"));<br/>
+TestModel result = baseDao.get(query);<br/>
+System.out.println(result.getNumber());<br/>

@@ -79,7 +79,9 @@ public class QueryUtil {
 			}else{
 				Field f = //clazz.getDeclaredField(column.getName());
 						getFieldOrSuper(column.getName(), clazz);
-				if(f == null){
+                System.out.println("clazz:" + clazz);
+                System.out.println("n:" + column.getName());
+                if(f == null){
 					throw new QueryException(ERROR_QUERY_TABLE, "[getField]" +  column.getName());
 				}
 				result = f.getType();

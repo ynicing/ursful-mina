@@ -27,6 +27,7 @@ public interface IBaseDao<T>{
 	boolean update(T t);
     boolean update(T t, boolean updateNull);
 	boolean delete(T t);
+    T get(IQuery<T> query) throws QueryException;
 	List<T> query(IQuery<T> query) throws QueryException;
 	int queryCount(IQuery<T> query) throws QueryException;
 	Page queryPage(IQuery<T> query) throws QueryException;

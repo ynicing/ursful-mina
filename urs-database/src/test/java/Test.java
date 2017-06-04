@@ -1,6 +1,5 @@
 import com.ursful.framework.database.*;
 import com.ursful.framework.database.base.model.TestModel;
-import com.ursful.framework.database.base.model.ViewModel;
 import com.ursful.framework.database.query.*;
 
 import java.util.Date;
@@ -64,11 +63,11 @@ public class Test {
         query();
 
 
-        IMultiQueryDao<TestModel> dao = new MultiQueryDaoImpl<TestModel>();
-        dao.createAliasTable("t", TestModel.class)
-        .createQuery(TestModel.class, new Column("sum", "t", TestModel.T_NUMBER, TestModel.T_NUMBER));
-        List<TestModel> m = baseDao.query(dao);
-        System.out.println(m.get(0).getNumber());
+        IQuery<TestModel> query = new QueryDaoImpl<TestModel>()
+        .table(TestModel.class)
+        .createQuery(TestModel.class, new Column("sum", null, TestModel.T_NUMBER, "number"));
+        TestModel result = baseDao.get(query);
+        System.out.println(result.getNumber());
 
         baseDao.delete(testModel);
 
