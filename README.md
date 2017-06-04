@@ -1,5 +1,8 @@
 # urs-database
-light operation database, CRED and statistic  @ursful.com<br/>
+
+轻量级ORM，详细查看src/test/Test.java
+
+light orm database, CRED and statistic  @ursful.com<br/>
 
 IBaseDao<TestModel> baseDao = new BaseDaoImpl<TestModel>();<br/>
 
