@@ -72,5 +72,8 @@ public class TestModel implements Serializable{
     @RdColumn(name = "NAME")
     private String name;
 
+    //set/get methods
 }
 </pre>
+
+3.使用IBaseDao/IBaseSQL。
