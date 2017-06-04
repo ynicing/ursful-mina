@@ -66,7 +66,7 @@ public class Test {
 
         IMultiQueryDao<TestModel> dao = new MultiQueryDaoImpl<TestModel>();
         dao.createAliasTable("t", TestModel.class)
-                .createQuery(TestModel.class, new Column("sum", "t", TestModel.T_NUMBER, TestModel.T_NUMBER));
+        .createQuery(TestModel.class, new Column("sum", "t", TestModel.T_NUMBER, TestModel.T_NUMBER));
         List<TestModel> m = baseDao.query(dao);
         System.out.println(m.get(0).getNumber());
 
