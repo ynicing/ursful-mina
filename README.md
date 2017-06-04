@@ -42,3 +42,25 @@ IQuery<TestModel> query = new QueryDaoImpl<TestModel>()<br/>
 .createQuery(TestModel.class, new Column("sum", null, TestModel.T_NUMBER, "number"));<br/>
 TestModel result = baseDao.get(query);<br/>
 System.out.println(result.getNumber());<br/>
+
+
+使用方法
+----------------------------------
+1.注入数据源
+
+ConnectionManager.getManager().init(new BaseDataSource(dbinfo), dbinfo);
+
+2.编写model，Java Field字段与数据库字段对应。
+
+<pre>
+@RdTable(name = "T_TEST_MODEL")
+public class TestModel implements Serializable{
+
+    @RdColumn(name = "ID", unique = true)
+    private String id;
+
+    @RdColumn(name = "NAME")
+    private String name;
+
+}
+</pre>
