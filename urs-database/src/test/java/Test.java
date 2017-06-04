@@ -21,6 +21,7 @@ public class Test {
      */
 
     private static IBaseDao<TestModel> baseDao = new BaseDaoImpl<TestModel>();
+    private static IBaseSQL baseSQL = new BaseSQLImpl();
 
     static {
         DatabaseInfo dbinfo = new DatabaseInfo();
@@ -72,6 +73,10 @@ public class Test {
         baseDao.delete(testModel);
 
         query();
+
+        Long res = (Long)baseSQL.queryObject("select count(*) from t_test_model");
+
+        System.out.println("Result : " + res);
 
     }
 

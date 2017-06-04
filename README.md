@@ -4,45 +4,55 @@
 
 light orm database, CRED and statistic  @ursful.com<br/>
 
-IBaseDao<TestModel> baseDao = new BaseDaoImpl<TestModel>();<br/>
+<pre>
 
-TestModel model = new TestModel();<br/>
-model.setId(UUID.randomUUID().toString());<br/>
-model.setCreateDate(new Date());<br/>
-model.setName("Hello");<br/>
-model.setNumber(10);<br/>
+IBaseDao<TestModel> baseDao = new BaseDaoImpl<TestModel>();
+IBaseSQL baseSQL = new BaseSQLImpl();
 
-//保存<br/>
-baseDao.save(model);<br/>
+
+TestModel model = new TestModel();
+model.setId(UUID.randomUUID().toString());
+model.setCreateDate(new Date());
+model.setName("Hello");
+model.setNumber(10);
+
+//保存
+baseDao.save(model);
  
-model.setName("me");<br/>
+model.setName("me");
 
 //更新<br/>
-baseDao.update(model);<br/>
+baseDao.update(model);
 
-model.setCreateDate(null);<br/>
+model.setCreateDate(null);
 
-//更新Null<br/>
-baseDao.update(model, true);<br/>
+//更新Null
+baseDao.update(model, true);
 
 //删除<br/>
-baseDao.delete(model);<br/>
+baseDao.delete(model);
         
-IQuery<TestModel> query = new QueryDaoImpl<TestModel>()<br/>
-.table(TestModel.class)<br/>
-.createQuery("*");<br/>
+IQuery<TestModel> query = new QueryDaoImpl<TestModel>()
+.table(TestModel.class)
+.createQuery("*");
 
 //查询<br/>
-List<TestModel> testModels = baseDao.query(query);<br/>
+List<TestModel> testModels = baseDao.query(query);
 
-//函数使用,如 sum <br/>
+//函数使用,如 sum
 
-IQuery<TestModel> query = new QueryDaoImpl<TestModel>()<br/>
-.table(TestModel.class)<br/>
-.createQuery(TestModel.class, new Column("sum", null, TestModel.T_NUMBER, "number"));<br/>
-TestModel result = baseDao.get(query);<br/>
-System.out.println(result.getNumber());<br/>
+IQuery<TestModel> query = new QueryDaoImpl<TestModel>()
+.table(TestModel.class)
+.createQuery(TestModel.class, new Column("sum", null, TestModel.T_NUMBER, "number"));
+TestModel result = baseDao.get(query);
+System.out.println(result.getNumber());
 
+
+Long res = (Long)baseSQL.queryObject("select count(*) from t_test_model");
+
+System.out.println("Result : " + res);
+
+</pre>
 
 使用方法
 ----------------------------------
