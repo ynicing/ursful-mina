@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE component SYSTEM "http://java.sun.com/dtd/component.dtd">
+<component>
+    <id>weitu-orm</id>
+    <name>ORM</name>
+    <description>a light weight orm for database.</description>
+    <url>/view/component/orm/index</url>
+    <version>1.0</version>
+    <beans>
+        <bean>baseDao</bean>
+        <bean>baseSQL</bean>
+    </beans>
+    <configuration>
+        <packages>
+            <package>com.weitu.framework.component.orm.component</package>
+        </packages>
+    </configuration>
+</component>

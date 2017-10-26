@@ -1,0 +1,1 @@
+package com.weitu.framework.component.orm.test.service;import com.weitu.framework.component.orm.BaseServiceImpl;import org.springframework.stereotype.Service;import com.weitu.songda.entity.Rose;import com.weitu.songda.service.IRoseService;@Service("roseService")public class RoseServiceImpl extends BaseServiceImpl<Rose> implements IRoseService{}
