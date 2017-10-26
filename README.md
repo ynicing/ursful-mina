@@ -6,8 +6,7 @@ light orm database, CRED and statistic  @ursful.com<br/>
 
 <pre>
 
-IBaseDao<TestModel> baseDao = new BaseDaoImpl<TestModel>();
-IBaseSQL baseSQL = new BaseSQLImpl();
+ITestService<TestModel> baseDao = new TestServiceImpl<TestModel>();
 
 
 TestModel model = new TestModel();
@@ -58,7 +57,8 @@ System.out.println("Result : " + res);
 ----------------------------------
 1.注入数据源
 
-ConnectionManager.getManager().init(new BaseDataSource(dbinfo), dbinfo);
+查看测试用例 orm/test/java
+//ConnectionManager.getManager().init(new BaseDataSource(dbinfo), dbinfo);
 
 2.编写model，Java Field字段与数据库字段对应。
 
@@ -76,4 +76,4 @@ public class TestModel implements Serializable{
 }
 </pre>
 
-3.使用IBaseDao/IBaseSQL。
+3.使用IBaseService/BaseServiceImpl。
