@@ -1,1 +1,0 @@
-package com.weitu.framework.component.orm.test.service;import com.weitu.framework.component.orm.BaseServiceImpl;import org.springframework.stereotype.Service;import com.weitu.songda.entity.Test;import com.weitu.songda.service.ITestService;@Service("testService")public class TestServiceImpl extends BaseServiceImpl<Test> implements ITestService{}

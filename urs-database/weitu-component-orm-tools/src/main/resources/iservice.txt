@@ -1,9 +1,0 @@
-package {packageName}.service{sys};
-
-import com.weitu.framework.component.orm.IBaseService;
-
-import {packageName}.entity{sys}.{beanName};
-
-public interface I{beanName}Service extends IBaseService<{beanName}>{
-
-}

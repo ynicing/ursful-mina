@@ -1,1 +1,0 @@
-package com.weitu.songda.service;import com.weitu.framework.component.orm.IBaseService;import com.weitu.songda.entity.Test;public interface ITestService extends IBaseService<Test>{}

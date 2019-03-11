@@ -1,1 +1,0 @@
-package com.weitu.songda.service.sys;import com.weitu.framework.component.orm.IBaseService;import com.weitu.songda.entity.sys.SysTest;public interface ISysTestService extends IBaseService<SysTest>{}
