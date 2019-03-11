@@ -1,6 +1,6 @@
 # ursful-mina
-Message <br/>
-
+Message Center(C-S-S-C): Client to Server - Server to Client Mode <br/>
+<br/>
 Usage:<br/>
 <br/>
 <h2>Server: </h2>
