@@ -125,10 +125,6 @@
                 <goals>
                   <goal>sign</goal>
                 </goals>
-                <configuration>
-                  <executable>gpg</executable>
-                  <passphrase>zimoziyan</passphrase>
-                </configuration>
               </execution>
             </executions>
           </plugin>
