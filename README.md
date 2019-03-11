@@ -16,11 +16,11 @@ new Thread(server).start();<br/>
         @Override<br/>
         public void message(Message message, MessageSession session) {<br/>
             if (message.getType() == 0) {<br/>
-            Message reply = message.reply("self reply.");<br/>
-            session.sendMessage(reply);<br/>
-            <br/>
-            reply.setId(Message.nextID());<br/>
-            message.setType(1);<br/>
+                Message reply = message.reply("self reply.");<br/>
+                session.sendMessage(reply);<br/>
+                <br/>
+                reply.setId(Message.nextID());<br/>
+                message.setType(1);<br/>
                 message.setData("new test");<br/>
                 session.sendMessage(message);<br/>
             } else if (message.getType() == 1) {<br/>
