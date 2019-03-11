@@ -2,23 +2,25 @@
 Message <br/>
 
 Usage:<br/>
-
-Server:<br/>
-
-    UrsServer server = new UrsServer("server1", 9090);<br/>
-    server.enableTransfer(false);<br/>
-    new Thread(server).start();<br/>
 <br/>
-Client: <br/>
+<h2>Server: </h2>
+<pre>
+UrsServer server = new UrsServer("server1", 9090);<br/>
+server.enableTransfer(false);<br/>
+new Thread(server).start();<br/>
+</pre>
+<br/>
+<h2>Client: </h2>
+<pre>
     InterfaceManager.register(new IMessage() {<br/>
         @Override<br/>
         public void message(Message message, MessageSession session) {<br/>
-             if (message.getType() == 0) {<br/>
-                Message reply = message.reply("self reply.");<br/>
-                session.sendMessage(reply);<br/>
-
-                reply.setId(Message.nextID());<br/>
-                message.setType(1);<br/>
+            if (message.getType() == 0) {<br/>
+            Message reply = message.reply("self reply.");<br/>
+            session.sendMessage(reply);<br/>
+            <br/>
+            reply.setId(Message.nextID());<br/>
+            message.setType(1);<br/>
                 message.setData("new test");<br/>
                 session.sendMessage(message);<br/>
             } else if (message.getType() == 1) {<br/>
@@ -77,3 +79,4 @@ Client: <br/>
     System.out.println("servers:" + reply);<br/>
 <br/>
     client.close();<br/>
+</pre>
