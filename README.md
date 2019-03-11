@@ -13,8 +13,7 @@ Client: <br/>
     InterfaceManager.register(new IMessage() {<br/>
         @Override<br/>
         public void message(Message message, MessageSession session) {<br/>
-            System.out.println(message.getFromCid() + ">" + message.getToCid() + ">" + message.getType() + ">" + message.getData());<br/>
-            if (message.getType() == 0) {<br/>
+             if (message.getType() == 0) {<br/>
                 Message reply = message.reply("self reply.");<br/>
                 session.sendMessage(reply);<br/>
 
