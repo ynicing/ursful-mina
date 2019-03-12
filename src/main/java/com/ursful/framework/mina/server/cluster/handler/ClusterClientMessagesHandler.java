@@ -2,6 +2,7 @@ package com.ursful.framework.mina.server.cluster.handler;
 
 import com.ursful.framework.mina.client.message.*;
 import com.ursful.framework.mina.client.mina.packet.ClientPacketHandler;
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
 import com.ursful.framework.mina.common.Opcode;
 import com.ursful.framework.mina.common.packet.ByteArrayPacket;
 import com.ursful.framework.mina.common.support.User;
@@ -24,7 +25,7 @@ public class ClusterClientMessagesHandler implements ClientPacketHandler {
         return Opcode.MESSAGE.ordinal();
     }
 
-    public void handlePacket(ByteReader reader, IoSession session) {
+    public void handlePacket(ByteReader reader, PacketWriter writer) {
         String fromCid = reader.readString();
         String toCid = reader.readString();
         byte[] data = reader.readBytes();
@@ -36,12 +37,12 @@ public class ClusterClientMessagesHandler implements ClientPacketHandler {
         if(client != null){
             client.write(new ByteArrayPacket(data));
         }else{
-            replyServer(data, session);
+            replyServer(data, writer);
             logger.warn("Unknown cluster server:" + toCid);
         }
     }
 
-    private void replyServer(byte[] message, IoSession session){
+    private void replyServer(byte[] message, PacketWriter writer){
         ByteReader reader = new ByteReader(message);
         reader.skip(2);
         String id = reader.readString();
@@ -70,7 +71,7 @@ public class ClusterClientMessagesHandler implements ClientPacketHandler {
             msg.setToCid(fromCid);
             msg.setFromCid("system@" + User.getDomain(toCid));
             msg.setData(data);
-            session.write(msg.getPacket());
+            writer.sendPacket(msg.getPacket());
         }else{
             logger.info("do.nothing..." + toCid);
         }

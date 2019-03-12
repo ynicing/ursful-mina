@@ -1,5 +1,6 @@
 package com.ursful.framework.mina.common.support;
 
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
 import com.ursful.framework.mina.common.packet.Packet;
 import org.apache.mina.core.session.IoSession;
 
@@ -12,17 +13,17 @@ import org.apache.mina.core.session.IoSession;
  */
 public class Session {
 
-    private IoSession session;
+    private PacketWriter writer;
 
     public Session(){}
 
-    public Session(IoSession session){
-        this.session = session;
+    public Session(PacketWriter writer){
+        this.writer = writer;
     }
 
     public void send(Packet packet){
-        if(this.session != null){
-            this.session.write(packet);
+        if(this.writer != null){
+            this.writer.sendPacket(packet);
         }
     }
 }

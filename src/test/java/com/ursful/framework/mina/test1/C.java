@@ -2,6 +2,7 @@ package com.ursful.framework.mina.test1;
 
 import com.ursful.framework.mina.client.UrsClient;
 import com.ursful.framework.mina.client.message.*;
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
 import com.ursful.framework.mina.common.InterfaceManager;
 import com.ursful.framework.mina.common.support.IClientStatus;
 

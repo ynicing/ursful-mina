@@ -2,10 +2,11 @@ package com.ursful.framework.mina.client.mina.handler;
 
 import com.ursful.framework.mina.client.message.IPresenceInfo;
 import com.ursful.framework.mina.client.mina.packet.ClientPacketHandler;
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
 import com.ursful.framework.mina.common.InterfaceManager;
 import com.ursful.framework.mina.common.Opcode;
 import com.ursful.framework.mina.common.tools.ByteReader;
-import org.apache.mina.core.session.IoSession;
+import com.ursful.framework.mina.common.tools.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ public class ClientPresenceInfoHandler implements ClientPacketHandler{
     }
 
 
-    public void handlePacket(ByteReader reader, IoSession session) {
+    public void handlePacket(ByteReader reader, PacketWriter writer) {
         Map<String, Map<String, Object>> map = new HashMap<String, Map<String, Object>>();
         while (reader.available() > 0){
             String cid = reader.readString();
@@ -27,7 +28,12 @@ public class ClientPresenceInfoHandler implements ClientPacketHandler{
         }
         List<IPresenceInfo> presenceInfos = InterfaceManager.getObjects(IPresenceInfo.class);
         for(IPresenceInfo info : presenceInfos){
-            info.presences(map);
+            ThreadUtils.start(new Runnable() {
+                @Override
+                public void run() {
+                    info.presences(map);
+                }
+            });
         }
     }
 

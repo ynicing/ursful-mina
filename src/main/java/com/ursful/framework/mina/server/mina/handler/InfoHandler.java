@@ -3,10 +3,7 @@ package com.ursful.framework.mina.server.mina.handler;
 import com.ursful.framework.mina.common.InterfaceManager;
 import com.ursful.framework.mina.common.Opcode;
 import com.ursful.framework.mina.common.support.User;
-import com.ursful.framework.mina.common.tools.ByteReader;
-import com.ursful.framework.mina.common.tools.ByteWriter;
-import com.ursful.framework.mina.common.tools.NetworkUtils;
-import com.ursful.framework.mina.common.tools.StringUtils;
+import com.ursful.framework.mina.common.tools.*;
 import com.ursful.framework.mina.server.client.Client;
 import com.ursful.framework.mina.server.client.ClientUser;
 import com.ursful.framework.mina.server.cluster.listener.IClusterClientStatus;
@@ -73,7 +70,12 @@ public class InfoHandler implements PacketHandler {
             int port = (int) metaData.get("SERVER_PORT");
             List<IClusterClientStatus> statuses = InterfaceManager.getObjects(IClusterClientStatus.class);
             for (IClusterClientStatus status : statuses) {
-                status.serverClientReady(c.getUser().getCid(), host, port);
+                ThreadUtils.start(new Runnable() {
+                    @Override
+                    public void run() {
+                        status.serverClientReady(c.getUser().getCid(), host, port);
+                    }
+                });
             }
         }
         c.setMetaData(metaData);

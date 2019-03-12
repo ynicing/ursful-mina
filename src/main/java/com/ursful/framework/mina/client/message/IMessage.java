@@ -1,5 +1,7 @@
 package com.ursful.framework.mina.client.message;
 
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
+
 /**
  * 类名：IPresence
  * 创建者：huangyonghua

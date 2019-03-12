@@ -6,5 +6,5 @@ import org.apache.mina.core.session.IoSession;
 
 public interface ClientPacketHandler {
     int opcode();
-    void handlePacket(ByteReader reader, IoSession session);
+    void handlePacket(ByteReader reader, PacketWriter writer);
 }

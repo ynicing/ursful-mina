@@ -1,6 +1,7 @@
 package com.ursful.framework.mina.server.cluster.handler;
 
 import com.ursful.framework.mina.client.mina.packet.ClientPacketHandler;
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
 import com.ursful.framework.mina.common.Opcode;
 import com.ursful.framework.mina.common.packet.Packet;
 import com.ursful.framework.mina.common.tools.ByteReader;
@@ -22,7 +23,7 @@ public class ClusterClientPresenceHandler implements ClientPacketHandler {
         return Opcode.PRESENCE.ordinal();
     }
 
-    public void handlePacket(ByteReader reader, IoSession session) {
+    public void handlePacket(ByteReader reader, PacketWriter writer) {
         String cid = reader.readString();
         int online = reader.readByte();
         Map<String, Object> data = reader.readObject();

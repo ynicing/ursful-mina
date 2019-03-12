@@ -3,7 +3,9 @@ package com.ursful.framework.mina.client.mina;
 import com.ursful.framework.mina.client.UrsClient;
 import com.ursful.framework.mina.client.exception.RefuseException;
 import com.ursful.framework.mina.client.message.IPresence;
+import com.ursful.framework.mina.client.message.MessageReader;
 import com.ursful.framework.mina.client.mina.packet.ClientPacketHandler;
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
 import com.ursful.framework.mina.client.tools.ClientPacketCreator;
 import com.ursful.framework.mina.client.tools.Cryptor;
 import com.ursful.framework.mina.common.InterfaceManager;
@@ -12,6 +14,7 @@ import com.ursful.framework.mina.common.packet.ByteArrayPacket;
 import com.ursful.framework.mina.common.packet.Packet;
 import com.ursful.framework.mina.common.support.IClientStatus;
 import com.ursful.framework.mina.common.tools.ByteReader;
+import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.server.client.Client;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
@@ -40,6 +43,16 @@ public class ClientHandler extends IoHandlerAdapter{
 
 	private String serverId;
 	private String cid;
+
+	private PacketWriter writer;
+
+	public PacketWriter getWriter() {
+		return writer;
+	}
+
+	public void setWriter(PacketWriter writer) {
+		this.writer = writer;
+	}
 
 	public ClientHandler(){}
 
@@ -83,10 +96,16 @@ public class ClientHandler extends IoHandlerAdapter{
 					logger.info("sent:" + this.cid + ">" + this.serverId + ">" + client.getMetaData());
 					String clientServerId = cid + "@" + serverId;
 					session.setAttribute(Client.CLIENT_ID_KEY, clientServerId);
-
+					writer = new PacketWriter(session);
+					writer.startup();
 					List<IClientStatus> statuses = InterfaceManager.getObjects(IClientStatus.class);
 					for(IClientStatus status : statuses){
-						status.clientReady(clientServerId);
+						ThreadUtils.start(new Runnable() {
+							@Override
+							public void run() {
+								status.clientReady(clientServerId);
+							}
+						});
 					}
 				}
 			}
@@ -95,7 +114,7 @@ public class ClientHandler extends IoHandlerAdapter{
 			ClientPacketHandler packetHandler = getHandler(packetId);
 			if (packetHandler != null) {
 				try {
-					packetHandler.handlePacket(reader, session);
+					packetHandler.handlePacket(reader, writer);
 				}catch (RefuseException e){
 					client.close();
 				} catch (Throwable t) {
@@ -125,7 +144,12 @@ public class ClientHandler extends IoHandlerAdapter{
 		for(IPresence presence : presenceInfos){
 			Map<String, Object> data = client.getMetaData();
 			data.put("ONLINE", false);
-			presence.presence(clientServerId, false, client.getMetaData());
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					presence.presence(clientServerId,false,client.getMetaData());
+				}
+			}).start();
 		}
 	}
 

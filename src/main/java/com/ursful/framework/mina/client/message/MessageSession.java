@@ -1,5 +1,6 @@
 package com.ursful.framework.mina.client.message;
 
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
 import com.ursful.framework.mina.common.support.Session;
 import org.apache.mina.core.session.IoSession;
 
@@ -12,7 +13,7 @@ import org.apache.mina.core.session.IoSession;
  */
 public class MessageSession extends Session{
 
-    public MessageSession(IoSession session){
+    public MessageSession(PacketWriter session){
         super(session);
     }
 

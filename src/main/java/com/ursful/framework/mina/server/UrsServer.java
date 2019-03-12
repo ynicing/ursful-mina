@@ -29,6 +29,7 @@ public class UrsServer implements Runnable{
 
     private static Logger logger = LoggerFactory.getLogger(UrsServer.class);
 
+
     public List<InetSocketAddress> ipPortList = new ArrayList<InetSocketAddress>();
     private boolean enableTransfer;
     public void setClusterIps(String ips){

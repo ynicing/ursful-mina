@@ -1,6 +1,7 @@
 package com.ursful.framework.mina.client.mina.handler;
 
 import com.ursful.framework.mina.client.mina.packet.ClientPacketHandler;
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
 import com.ursful.framework.mina.client.tools.ClientPacketCreator;
 import com.ursful.framework.mina.common.Opcode;
 import com.ursful.framework.mina.common.packet.Packet;
@@ -13,8 +14,8 @@ public class ClientKeepAliveHandler implements ClientPacketHandler {
         return Opcode.PING.ordinal();
     }
 
-    public void handlePacket(ByteReader reader, IoSession session) {
+    public void handlePacket(ByteReader reader, PacketWriter writer) {
         Packet packet = ClientPacketCreator.getPing();
-        session.write(packet);
+        writer.sendPacket(packet);
     }
 }

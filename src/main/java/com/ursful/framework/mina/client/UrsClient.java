@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.ursful.framework.mina.client.message.MessageReader;
 import com.ursful.framework.mina.client.message.MessageSession;
 import com.ursful.framework.mina.client.mina.ClientHandler;
 import com.ursful.framework.mina.client.mina.coder.ClientCodecFactory;
@@ -15,6 +16,7 @@ import com.ursful.framework.mina.common.InterfaceManager;
 import com.ursful.framework.mina.common.packet.Packet;
 import com.ursful.framework.mina.common.support.IClientStatus;
 import com.ursful.framework.mina.common.support.Session;
+import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.server.cluster.handler.ClusterClientMessagesHandler;
 import com.ursful.framework.mina.server.cluster.handler.ClusterClientPresenceHandler;
 import com.ursful.framework.mina.server.cluster.handler.ClusterClientPresenceInfoHandler;
@@ -46,6 +48,8 @@ public class UrsClient implements Runnable{
     public Map<String, Object> getMetaData() {
         return metaData;
     }
+
+    private MessageReader messageReader;
 
     public void setMetaData(Map<String, Object> metaData) {
         if(metaData != null) {
@@ -97,6 +101,8 @@ public class UrsClient implements Runnable{
     private int port;
     private String host;
 
+    private ClientHandler handler;
+
     public UrsClient(String cid, String host, int port){
         this();
         this.clientId = cid;
@@ -137,19 +143,24 @@ public class UrsClient implements Runnable{
             connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ClientCodecFactory()));
 
 
-            ClientHandler handler = new ClientHandler(this);
+            handler = new ClientHandler(this);
             handler.register(new ClientKeepAliveHandler());
             handler.register(new ClientInfoHandler());
+
+
             if(isCluster()){
                 handler.register(new ClusterClientMessagesHandler());
                 handler.register(new ClusterClientPresenceHandler());
                 handler.register(new ClusterClientPresenceInfoHandler());
                 handler.register(new ClusterClientServerInfoHandler());
             }else{
-                handler.register(new ClientMessagesHandler());
+                ClientMessagesHandler messagesHandler = new ClientMessagesHandler();
+                handler.register(messagesHandler);
                 handler.register(new ClientPresenceHandler());
                 handler.register(new ClientPresenceInfoHandler());
                 handler.register(new ClientServerInfoHandler());
+                messageReader = new MessageReader(messagesHandler);
+                messageReader.startup();
             }
 
             connector.setHandler(handler);
@@ -182,13 +193,23 @@ public class UrsClient implements Runnable{
                     if(!isCluster()) {
                         List<IClientStatus> statuses = InterfaceManager.getObjects(IClientStatus.class);
                         for (IClientStatus status : statuses) {
-                            status.clientClose(getCid());
+                            ThreadUtils.start(new Runnable() {
+                                @Override
+                                public void run() {
+                                    status.clientClose(getCid());
+                                }
+                            });
                         }
                         reconnect();
                     }else{
                         List<IClusterClientStatus> statuses = InterfaceManager.getObjects(IClusterClientStatus.class);
                         for (IClusterClientStatus status : statuses) {
-                            status.serverClientClose(getCid(),host, port);
+                            ThreadUtils.start(new Runnable() {
+                                @Override
+                                public void run() {
+                                    status.serverClientClose(getCid(), host, port);
+                                }
+                            });
                         }
                     }
                 }
@@ -200,7 +221,12 @@ public class UrsClient implements Runnable{
                 if(!connect(null)) {
                     List<IClusterClientStatus> statuses = InterfaceManager.getObjects(IClusterClientStatus.class);
                     for (IClusterClientStatus status : statuses) {
-                        status.serverClientClose(getCid(),host, port);
+                        ThreadUtils.start(new Runnable() {
+                            @Override
+                            public void run() {
+                                status.serverClientClose(getCid(), host, port);
+                            }
+                        });
                     }
                 }
             }
@@ -258,9 +284,6 @@ public class UrsClient implements Runnable{
         return false;
     }
 
-    public Session getSession(){
-        return new Session(session);
-    }
 
     public void close(){
         this.autoConnected = false;
@@ -269,19 +292,15 @@ public class UrsClient implements Runnable{
         }
         connector.dispose();
     }
+
     public MessageSession getMessageSession(){
         if(session != null && !session.isActive()){
             session.closeOnFlush();
         }
-        return new MessageSession(session);
+        return new MessageSession(handler.getWriter());
     }
 
 
-    private static AtomicLong longValue = new AtomicLong(0);
-
-    public static String createMessageId(){
-        return null;
-    }
 
 
 }

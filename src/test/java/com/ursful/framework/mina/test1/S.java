@@ -20,8 +20,6 @@ import java.util.List;
  */
 public class S {
 
-
-
     public static void main(String[] args) throws Exception{
 
         UrsServer server = new UrsServer("server1", 9090);

@@ -1,12 +1,13 @@
 package com.ursful.framework.mina.server.cluster.handler;
 
 import com.ursful.framework.mina.client.mina.packet.ClientPacketHandler;
+import com.ursful.framework.mina.client.mina.packet.PacketWriter;
 import com.ursful.framework.mina.common.InterfaceManager;
 import com.ursful.framework.mina.common.Opcode;
 import com.ursful.framework.mina.common.support.User;
 import com.ursful.framework.mina.common.tools.ByteReader;
+import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.server.cluster.listener.IClusterClientStatus;
-import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public class ClusterClientServerInfoHandler implements ClientPacketHandler {
         return Opcode.SERVER_INFO.ordinal();
     }
 
-    public void handlePacket(ByteReader reader, IoSession session) {
+    public void handlePacket(ByteReader reader, PacketWriter writer) {
         Map<String, Map<String, Object>> map = new HashMap<String, Map<String, Object>>();
         while (reader.available() > 0){
             String cid = reader.readString();
@@ -33,10 +34,15 @@ public class ClusterClientServerInfoHandler implements ClientPacketHandler {
             int port = (int)data.get("SERVER_PORT");
             List<IClusterClientStatus> statuses = InterfaceManager.getObjects(IClusterClientStatus.class);
             for (IClusterClientStatus status : statuses) {
-                String server = "system@" + User.getDomain(session.getAttribute("CLIENT_ID").toString());
+                String server = "system@" + User.getDomain(writer.getSession().getAttribute("CLIENT_ID").toString());
                 String [] hosts = host.split(",");
                 for(String h : hosts) {
-                    status.serverClientReady(server, h, port);
+                    ThreadUtils.start(new Runnable() {
+                        @Override
+                        public void run() {
+                            status.serverClientReady(server, h, port);
+                        }
+                    });
                 }
             }
         }

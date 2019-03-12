@@ -9,10 +9,10 @@ import com.ursful.framework.mina.common.packet.Packet;
 import com.ursful.framework.mina.common.support.User;
 import com.ursful.framework.mina.common.tools.ByteReader;
 import com.ursful.framework.mina.common.tools.ByteWriter;
+import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.server.client.Client;
 import com.ursful.framework.mina.server.client.ClientUser;
 import com.ursful.framework.mina.server.message.IServerMessage;
-import com.ursful.framework.mina.server.mina.ClientInfo;
 import com.ursful.framework.mina.server.mina.ClientManager;
 import com.ursful.framework.mina.server.mina.packet.PacketHandler;
 import com.ursful.framework.mina.server.tools.PacketCreator;
@@ -79,7 +79,12 @@ public class MessagesHandler implements PacketHandler {
             //"system.servers"
             List<IServerMessage> messages = InterfaceManager.getObjects(IServerMessage.class);
             for(IServerMessage serverMessage : messages){
-                serverMessage.received(message, c);
+                ThreadUtils.start(new Runnable() {
+                    @Override
+                    public void run() {
+                        serverMessage.received(message, c);
+                    }
+                });
             }
             return;
         }
