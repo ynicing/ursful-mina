@@ -39,6 +39,9 @@ public class InfoHandler implements PacketHandler {
             return;
         }
         Boolean force = (Boolean)metaData.get("force");
+        if(force == null){
+            force = (Boolean)metaData.get("FORCE");
+        }
         Collection<Client> clients = ClientManager.getAllClients();
         if(force == null || !force.booleanValue()) {
             for (Client client : clients) {
