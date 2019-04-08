@@ -25,6 +25,8 @@ public class InfoHandler implements PacketHandler {
     @Override
     public void handlePacket(ByteReader reader, Client c) {
         String serverClientId = reader.readString();
+        int isServer = reader.readByte();
+        Map<String, Object> metaData = reader.readObject();
         String id = User.getId(serverClientId);
         if("all".equals(id)
                 || "system".equals(id)){
@@ -36,20 +38,22 @@ public class InfoHandler implements PacketHandler {
             //c.write();
             return;
         }
+        Boolean force = (Boolean)metaData.get("force");
         Collection<Client> clients = ClientManager.getAllClients();
-        for(Client client :clients){
-            if(serverClientId.equalsIgnoreCase(client.getUser().getCid())){
-                ByteWriter writer = new ByteWriter();
-                writer.writeShort(Opcode.INFO.ordinal());
-                writer.writeString("[" + serverClientId + "]已被其他用户使用。");
-                c.write(writer.getPacket());
-                c.getSession().closeOnFlush();
-                return;
+        if(force == null || !force.booleanValue()) {
+            for (Client client : clients) {
+                if (serverClientId.equalsIgnoreCase(client.getUser().getCid())) {
+                    ByteWriter writer = new ByteWriter();
+                    writer.writeShort(Opcode.INFO.ordinal());
+                    writer.writeString("[" + serverClientId + "]已被其他用户使用。");
+                    c.write(writer.getPacket());
+                    c.getSession().closeOnFlush();
+                    return;
+                }
             }
         }
 
-        int isServer = reader.readByte();
-        Map<String, Object> metaData = reader.readObject();
+
         //metaData.put("PRIORITY_TIME", System.nanoTime());//谁先登录，谁先处理
         String host = c.getSession().getAttribute("CLIENT_IP").toString();
         ClientUser user = new ClientUser();
