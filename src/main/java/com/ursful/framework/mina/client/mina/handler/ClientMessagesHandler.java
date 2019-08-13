@@ -42,7 +42,7 @@ public class ClientMessagesHandler implements ClientPacketHandler {
         message.setToCid(toCid);
         message.setType(type);
         message.setData(data);
-        logger.info("Client Messages:" + message.toString());
+//        logger.info("Client Messages:" + message.toString());
         if(!id.startsWith("reply-")) {
             List<IMessage> messages = InterfaceManager.getObjects(IMessage.class);
             for (IMessage imsg : messages) {
