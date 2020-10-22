@@ -36,37 +36,9 @@ public class Client {
             }
         });
 
-        UrsManager.register(new IPresence() {
-            @Override
-            public void presence(String cid, boolean online, Map<String, Object> data) {
-                System.out.println("user[" + cid + "]:" + (online ? "Online" : "Offline") + " >>> " + data);
-            }
-        });
-
-        UrsManager.register(new IPresenceInfo() {
-            @Override
-            public void presences(Map<String, Map<String, Object>> cids) {
-                System.out.println(cids);
-            }
-        });
-
-        UrsManager.register(new IClientStatus() {
-
-            @Override
-            public void clientReady(String cid) {
-                System.out.println("clientReady:" + cid);
-            }
-
-            @Override
-            public void clientClose(String cid) {
-                System.out.println("clientClose:" + cid);
-            }
-        });
-
         UrsClient client = new UrsClient("client", "127.0.0.1", 9090);
         client.getMetaData().put("force", "true");
         client.register(new ClientMessagesHandler());
-
         new Thread(client).run();
 
 
