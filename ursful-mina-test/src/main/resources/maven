@@ -1,0 +1,23 @@
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.igniterealtime</groupId>
+            <artifactId>tinder</artifactId>
+            <version>1.3.0</version>
+            <exclusions>
+                <exclusion> <!-- Exclude the older SLF4J dependency that's defined in Tinder -->
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion> <!-- Exclude the older dom4j dependency that's defined in Tinder -->
+                    <groupId>dom4j</groupId>
+                    <artifactId>dom4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
