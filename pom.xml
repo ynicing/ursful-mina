@@ -7,7 +7,7 @@
   <groupId>com.ursful.framework</groupId>
   <artifactId>ursful-mina</artifactId>
   <packaging>pom</packaging>
-  <version>2.0</version>
+  <version>2.0.1</version>
 
   <description>MINA, message center.</description>
   <modules>
@@ -17,7 +17,7 @@
   </modules>
 
   <name>ursful-mina</name>
-  <url>http://www.ursful.com</url>
+  <url>https://ursful.com</url>
 
   <licenses>
     <license>

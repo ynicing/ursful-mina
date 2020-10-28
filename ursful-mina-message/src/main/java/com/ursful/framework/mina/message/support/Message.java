@@ -20,7 +20,7 @@ public class Message implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    public static Message parseMessage(ByteReader byteReader){
+    public static Message parseMessage(ByteReader byteReader, Class<? extends Message> clazz){
         if(byteReader.position() == 0){
             byteReader.skip(2);
         }
@@ -33,7 +33,18 @@ public class Message implements Serializable{
         if(available > 0){
             data2 = byteReader.readObject();
         }
-        Message message = new Message();
+        Message message = null;
+        if(clazz != null){
+            try {
+                message = clazz.newInstance();
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }else{
+            message = new Message();
+        }
         message.setData(data2);
         message.setFromCid(fromCid2);
         message.setToCid(toCid2);
@@ -45,7 +56,13 @@ public class Message implements Serializable{
     public static Message parseMessage(byte [] data){
         ByteReader byteReader = new ByteReader(data);
         byteReader.skip(2);
-        return parseMessage(byteReader);
+        return parseMessage(byteReader, null);
+    }
+
+    public static <T extends Message>  T parseMessage(byte [] data, Class<T> clazz){
+        ByteReader byteReader = new ByteReader(data);
+        byteReader.skip(2);
+        return (T)parseMessage(byteReader, clazz);
     }
 
     private static long cid = 0;

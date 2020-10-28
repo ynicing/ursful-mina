@@ -11,10 +11,10 @@
 
     <groupId>com.ursful.framework</groupId>
     <artifactId>ursful-mina-message</artifactId>
-    <version>2.0</version>
+    <version>2.0.1</version>
 
     <name>ursful-mina-message</name>
-    <url>http://www.ursful.com</url>
+    <url>https://ursful.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.ursful.framework</groupId>
             <artifactId>ursful-mina-core</artifactId>
-            <version>2.0</version>
+            <version>2.0.1</version>
         </dependency>
 
 
