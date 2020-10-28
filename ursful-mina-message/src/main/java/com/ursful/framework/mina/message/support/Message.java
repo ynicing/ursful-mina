@@ -54,12 +54,14 @@ public class Message implements Serializable{
     }
 
     public static Message parseMessage(byte [] data){
-        ByteReader byteReader = new ByteReader(data);
-        byteReader.skip(2);
-        return parseMessage(byteReader, null);
+        return parse(data, null);
     }
 
-    public static <T extends Message>  T parseMessage(byte [] data, Class<T> clazz){
+    public static Message parseMessage(ByteReader reader){
+        return parseMessage(reader, null);
+    }
+
+    public static <T extends Message>  T parse(byte [] data, Class<T> clazz){
         ByteReader byteReader = new ByteReader(data);
         byteReader.skip(2);
         return (T)parseMessage(byteReader, clazz);
@@ -161,7 +163,7 @@ public class Message implements Serializable{
     }
 
     public Message reply(Map<String, Object> data){
-       return reply(data, this.toCid);
+        return reply(data, this.toCid);
     }
 
     public boolean isReply(){

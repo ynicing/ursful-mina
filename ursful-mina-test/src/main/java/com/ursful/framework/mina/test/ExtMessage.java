@@ -2,14 +2,6 @@ package com.ursful.framework.mina.test;
 
 import com.ursful.framework.mina.message.support.Message;
 
-/**
- * <p>项目名称: ursful-mina </p>
- * <p>描述:  </p>
- * <p>创建时间:2020/10/28 10:56 </p>
- * <p>公司信息:厦门海迈科技股份有限公司&gt;研发中心&gt;框架组</p>
- *
- * @author huangyonghua, jlis@qq.com
- */
 public class ExtMessage extends Message {
 
     public int getMsgType(){
@@ -25,7 +17,15 @@ public class ExtMessage extends Message {
     }
 
     public static void main(String[] args) {
-        ExtMessage message = Message.parseMessage(new byte[]{}, ExtMessage.class);
+        Message message = new Message();
+        message.setFromCid("from@com");
+        message.setToCid("to@com");
+        message.setType("message");
+        message.put("msgType", 13);
+
+        byte[] data = message.getPacket().getBytes();
+        ExtMessage extMessage = Message.parse(data, ExtMessage.class);
+        System.out.println(extMessage.getMsgType());
     }
 
 }
