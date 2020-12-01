@@ -22,10 +22,12 @@ public class ExtMessage extends Message {
         message.setToCid("to@com");
         message.setType("message");
         message.put("msgType", 13);
-
+        System.out.println("send id: " + message.getId());
         byte[] data = message.getPacket().getBytes();
         ExtMessage extMessage = Message.parse(data, ExtMessage.class);
-        System.out.println(extMessage.getMsgType());
+        message = extMessage.reply();
+
+        System.out.println("replay id:" + message.getId());
     }
 
 }

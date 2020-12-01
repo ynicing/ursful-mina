@@ -1,5 +1,6 @@
 package com.ursful.framework.mina.client;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +46,8 @@ public class UrsClient implements Runnable{
     public Map<String, Object> getMetaData() {
         return metaData;
     }
+
+    private InetSocketAddress currentAddress;
 
 //    private List<IClientStartup> startups = new ArrayList<IClientStartup>();
 
@@ -107,9 +110,6 @@ public class UrsClient implements Runnable{
     private UrsClient(){
     }
 
-    private int port;
-    private String host;
-
     protected ClientHandler clientHandler;
 
     public ClientHandler getClientHandler(){
@@ -117,12 +117,7 @@ public class UrsClient implements Runnable{
     }
 
     public UrsClient(String cid, String host, int port){
-        this.clientId = cid;
-        this.metaData.put("CLIENT_TYPE", "CLIENT");
-        init();
-        this.host = host;
-        this.port = port;
-        this.addresses.add(new InetSocketAddress(host, port));
+        this(cid, null, host, port);
     }
 
     private void init(){
@@ -140,20 +135,35 @@ public class UrsClient implements Runnable{
         this.clientId = cid;
         this.resource = resource;
         this.metaData.put("CLIENT_TYPE", "CLIENT");
+        this.currentAddress = new InetSocketAddress(host, port);
+        this.addresses.add(this.currentAddress);
         init();
-        this.host = host;
-        this.port = port;
-        this.addresses.add(new InetSocketAddress(host, port));
+    }
+
+    public UrsClient(String cid, String resource, String ips){
+        this.clientId = cid;
+        this.resource = resource;
+        this.metaData.put("CLIENT_TYPE", "CLIENT");
+        addIps(ips);
+        if(this.addresses.isEmpty()){
+            throw new RuntimeException("No address found.");
+        }
+        this.currentAddress = this.addresses.get(0);
+        init();
+    }
+
+    public UrsClient(String cid, String ips){
+        this(cid, null, ips);
     }
 
     private List<InetSocketAddress> addresses = new ArrayList<InetSocketAddress>();
 
-    public void setIps(String ips){
+    public void addIps(String ips){
         if(ips != null) {
             String[] ip = ips.split(",");
-            for(String ipStr : ip){
+            for (String ipStr : ip) {
                 String[] ipAndPort = ipStr.split(":");
-                if(ipAndPort.length == 2) {
+                if (ipAndPort.length == 2) {
                     this.addresses.add(new InetSocketAddress(ipAndPort[0], Integer.parseInt(ipAndPort[1])));
                 }
             }
@@ -201,9 +211,12 @@ public class UrsClient implements Runnable{
 
 //            connector.setDefaultRemoteAddress(new InetSocketAddress(host, port));
 
+            UrsClient thisClient = this;
+
             connector.addListener(new IoServiceListener() {
                 @Override
                 public void serviceActivated(IoService ioService) throws Exception {
+                    logger.error("serviceActivated", ioService);
                 }
                 @Override
                 public void serviceIdle(IoService ioService, IdleStatus idleStatus) throws Exception {
@@ -214,7 +227,7 @@ public class UrsClient implements Runnable{
                 }
                 @Override
                 public void sessionCreated(IoSession ioSession) throws Exception {
-
+                    logger.error("sessionCreated", ioSession);
                 }
                 @Override
                 public void sessionClosed(IoSession ioSession) throws Exception {
@@ -228,6 +241,7 @@ public class UrsClient implements Runnable{
                             ThreadUtils.start(new Runnable() {
                                 @Override
                                 public void run() {
+                                    status.clientClose(thisClient, getCid());
                                     status.clientClose(getCid());
                                 }
                             });
@@ -239,7 +253,7 @@ public class UrsClient implements Runnable{
                             ThreadUtils.start(new Runnable() {
                                 @Override
                                 public void run() {
-                                    status.serverClientClose(getCid(), host, port);
+                                    status.serverClientClose(getCid(), currentAddress.getHostName(), currentAddress.getPort());
                                 }
                             });
                         }
@@ -250,13 +264,13 @@ public class UrsClient implements Runnable{
             if(!isCluster()) {
                 reconnect();
             }else{
-                if(!connect(null)) {
+                if(!connect(this.currentAddress)) {
                     List<IClusterClientStatus> statuses = UrsManager.getObjects(IClusterClientStatus.class);
                     for (IClusterClientStatus status : statuses) {
                         ThreadUtils.start(new Runnable() {
                             @Override
                             public void run() {
-                                status.serverClientClose(getCid(), host, port);
+                                status.serverClientClose(getCid(), currentAddress.getHostName(), currentAddress.getPort());
                             }
                         });
                     }
@@ -302,9 +316,7 @@ public class UrsClient implements Runnable{
 
     private boolean connect(InetSocketAddress address) {
         try {
-            if(address == null){
-                address = new InetSocketAddress(host, port);
-            }
+            this.currentAddress = address;
             ConnectFuture future = connector.connect(address);
             future.awaitUninterruptibly(); // 等待连接创建成功
             session = future.getSession(); // 获取会话

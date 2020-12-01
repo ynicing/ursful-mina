@@ -30,5 +30,17 @@ public class MessageSession extends Session{
         return result;
     }
 
+    public <T extends Message> T getExtensionReply(T message, long millisecond){
+        MessageCollector response = MessageCenter.createPacketCollector("reply-" + message.getId());
+        sendMessage(message);
+        // Wait up to a certain number of seconds for a reply
+        Message result = response.nextResult(millisecond);
+        // Stop queuing results
+        response.cancel();
+        if(result != null){
+            return (T) Message.parse(result.getPacket().getBytes(), message.getClass());
+        }
+        return null;
+    }
 
 }

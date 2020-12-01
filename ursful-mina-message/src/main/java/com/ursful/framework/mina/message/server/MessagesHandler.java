@@ -12,6 +12,7 @@ import com.ursful.framework.mina.message.support.Message;
 import com.ursful.framework.mina.message.support.MessageCreator;
 import com.ursful.framework.mina.server.client.Client;
 import com.ursful.framework.mina.server.client.ClientUser;
+import com.ursful.framework.mina.server.mina.ClientInfo;
 import com.ursful.framework.mina.server.mina.ClientManager;
 import com.ursful.framework.mina.server.mina.packet.PacketHandler;
 import com.ursful.framework.mina.server.tools.PacketCreator;
@@ -19,7 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MessagesHandler implements PacketHandler {
 
@@ -67,13 +70,13 @@ public class MessagesHandler implements PacketHandler {
             return;
         }
 
-        if(Message.BROADCAST.equalsIgnoreCase(message.getType())){//全部接收者
+        if(Message.BROADCAST.equalsIgnoreCase(message.getType())) {//全部接收者
             sendLocalServer(reader.getBytes());//本地服务
             //转发到其他服务。
             Collection<Client> clients = ClientManager.getAllClients();
             logger.info("sent to server-client clients:" + clients);
-            for(Client client : clients){
-                if(client.isServer()) {
+            for (Client client : clients) {
+                if (client.isServer()) {
                     //message.setToCid("all@" + client.getUser().getId());
                     Packet packet = PacketCreator.getMessageTransfer(
                             message.getType(), message.getFromCid(), message.getToCid(), reader.getBytes());
@@ -119,6 +122,13 @@ public class MessagesHandler implements PacketHandler {
                     }
                 }
             }*/
+        }else if(Message.CLIENTS.equals(message.getType())){
+            List<ClientInfo> clientInfoList = ClientManager.getClientServerInfos();
+            Message reply = message.reply();
+            for (ClientInfo info : clientInfoList) {
+                reply.put(info.getCid(), info.getData());
+            }
+            c.write(reply.getPacket());
         }else{
             if(message.getFromCid().equals(message.getToCid())){
                 logger.info("Self message receive:" + message.getToCid());

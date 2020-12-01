@@ -103,10 +103,12 @@ public class ClientHandler extends IoHandlerAdapter{
 					writer = new PacketWriter(session);
 					writer.startup();
 					List<IClientStatus> statuses = UrsManager.getObjects(IClientStatus.class);
+					UrsClient thisClient = this.client;
 					for(IClientStatus status : statuses){
 						ThreadUtils.start(new Runnable() {
 							@Override
 							public void run() {
+								status.clientReady(thisClient, clientServerId);
 								status.clientReady(clientServerId);
 							}
 						});

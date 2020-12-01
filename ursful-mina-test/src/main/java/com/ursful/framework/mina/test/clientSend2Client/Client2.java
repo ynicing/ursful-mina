@@ -28,6 +28,9 @@ public class Client2 {
             @Override
             public void message(Message message, MessageSession session) {
                 System.out.println(message.getFromCid() + ">" + message.getToCid() + ">" + message.getType() + ">" + message.getData());
+                Message reply = message.reply();
+                reply.put("anx", "hello");
+                session.sendMessage(reply);
             }
         });
 
@@ -73,7 +76,6 @@ public class Client2 {
         message.put("y",  123);
 
         MessageManager.getManager().setClient(client);
-
         Message reply = MessageManager.getManager().getReply(message, 1000);
         System.out.println("now:" + reply.getData());
 

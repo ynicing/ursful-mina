@@ -20,6 +20,25 @@ public class Message implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
+    public static <T extends Message> T wrapMessage(Message message, Class<T> clazz){
+        T t = null;
+        if(clazz != null){
+            try {
+                t = clazz.newInstance();
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        t.setData(message.getData());
+        t.setFromCid(message.getFromCid());
+        t.setToCid(message.getToCid());
+        t.setType(message.getType());
+        t.setId(message.getId());
+        return t;
+    }
+
     public static Message parseMessage(ByteReader byteReader, Class<? extends Message> clazz){
         if(byteReader.position() == 0){
             byteReader.skip(2);
@@ -91,6 +110,7 @@ public class Message implements Serializable{
     private Map<String, Object> data;
 
     public static final String BROADCAST = "broadcast";
+    public static final String CLIENTS = "clients";
     public static final String CHAT = "chat";//group chat,..
     //类型 0 chat 1 group chat 2 all 3 cluster 4 system
     /*
@@ -199,9 +219,9 @@ public class Message implements Serializable{
         this.data.put(key, value);
     }
 
-    public Object get(String key){
+    public <T> T get(String key){
         if (this.data != null){
-            return this.data.get(key);
+            return (T)this.data.get(key);
         }
         return null;
     }

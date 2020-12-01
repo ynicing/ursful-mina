@@ -14,7 +14,9 @@ import java.util.List;
 /**
  * Created by ynice on 2020/10/11.
  */
-public class MessageManager extends MessageSession {
+public class MessageManager{
+
+    private static MessageSession session;
 
     private List<IMessage> messages = new ArrayList<IMessage>();
 
@@ -54,11 +56,11 @@ public class MessageManager extends MessageSession {
     private UrsClient client;
 
     private MessageManager() {
-        super(null);
     }
 
     public void setClient(UrsClient client){
         this.client = client;
+        session = null;
     }
 
     public UrsClient getClient(){
@@ -66,13 +68,39 @@ public class MessageManager extends MessageSession {
     }
 
     public static MessageManager getManager(){
-
-        if(manager.getWriter() == null && manager.getClient() != null){
-           manager.setWriter(manager.getClient().getClientHandler().getWriter());
-        }
-//        this.manager.setWriter(client.getClientHandler().getWriter());
-
-//        MessageManager.getManager().setClient(client);
         return manager;
+    }
+
+    public MessageSession getSession(){
+        if (session == null){
+            if(client != null && client.getClientHandler() != null && client.getClientHandler().getWriter() != null){
+                session = new MessageSession(client.getClientHandler().getWriter());
+            }
+        }
+        return session;
+    }
+
+    public void sendMessage(Message message) {
+        getSession().sendMessage(message);
+    }
+
+    public Message getReply(Message message, long millisecond){
+        return getSession().getReply(message, millisecond);
+    }
+
+    public <T extends Message> T getExtensionReply(T message, long millisecond){
+        return getSession().getExtensionReply(message, millisecond);
+    }
+
+    public static void sendServerMessage(Message message) {
+        getManager().getSession().sendMessage(message);
+    }
+
+    public static Message getServerReply(Message message, long millisecond){
+        return getManager().getSession().getReply(message, millisecond);
+    }
+
+    public static <T extends Message> T getServerExtensionReply(T message, long millisecond){
+        return getManager().getSession().getExtensionReply(message, millisecond);
     }
 }
