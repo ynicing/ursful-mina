@@ -216,22 +216,18 @@ public class UrsClient implements Runnable{
             connector.addListener(new IoServiceListener() {
                 @Override
                 public void serviceActivated(IoService ioService) throws Exception {
-                    logger.error("serviceActivated", ioService);
                 }
                 @Override
                 public void serviceIdle(IoService ioService, IdleStatus idleStatus) throws Exception {
                 }
                 @Override
                 public void serviceDeactivated(IoService ioService) throws Exception {
-                    logger.error("serviceDeactivated", ioService.toString());
                 }
                 @Override
                 public void sessionCreated(IoSession ioSession) throws Exception {
-                    logger.error("sessionCreated", ioSession);
                 }
                 @Override
                 public void sessionClosed(IoSession ioSession) throws Exception {
-                    logger.error("sessionClosed");
                 }
                 @Override
                 public void sessionDestroyed(IoSession arg0) throws Exception {

@@ -132,7 +132,6 @@ public class TimerManager implements TimerManagerMBean {
             try {
                 r.run();
             } catch (Throwable t) {
-                //log.error("ERROR", t);
             }
         }
     }
