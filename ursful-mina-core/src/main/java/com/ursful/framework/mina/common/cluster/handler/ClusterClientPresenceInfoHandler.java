@@ -30,7 +30,7 @@ public class ClusterClientPresenceInfoHandler implements ClientPacketHandler{
 //            map.put(cid, online == 1);
             Map<String, Object> data = reader.readObject();
             ClientInfo info = new ClientInfo(cid, true, data);
-            if("CLIENT".equals(data.get("CLIENT_TYPE"))) {
+            if("CLIENT".equalsIgnoreCase((String)data.get("client_type"))) {
                 infos.add(info);
             }
             OtherServerClientManager.register(info);

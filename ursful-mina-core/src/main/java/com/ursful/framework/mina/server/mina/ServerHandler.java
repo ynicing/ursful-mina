@@ -55,7 +55,7 @@ public class ServerHandler extends IoHandlerAdapter {
     	String address = session.getRemoteAddress().toString();
 
         String clientIP = ((InetSocketAddress)session.getRemoteAddress()).getAddress().getHostAddress();
-        session.setAttribute("CLIENT_IP", clientIP);
+        session.setAttribute("client_ip", clientIP);
 
         byte ivSend[] = {82, 48, 120,  (byte) (Math.random() * 255)};
         byte ivRecv[] = {70, 114, 122, (byte) (Math.random() * 255)};

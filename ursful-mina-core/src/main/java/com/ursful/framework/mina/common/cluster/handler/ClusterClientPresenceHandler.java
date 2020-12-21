@@ -27,7 +27,7 @@ public class ClusterClientPresenceHandler implements ClientPacketHandler {
         int online = reader.readByte();
         Map<String, Object> data = reader.readObject();
         ClientInfo info = new ClientInfo(cid, online == 1, data);
-        if("CLIENT".equals(data.get("CLIENT_TYPE"))) {
+        if("CLIENT".equalsIgnoreCase((String)data.get("client_type"))) {
             Packet packet = PacketCreator.getPresence(info);
             ClientManager.broadcastWithoutServer(packet);//转发，本地所有客户端。
             logger.info("Broadcast client online : " + (online == 1));

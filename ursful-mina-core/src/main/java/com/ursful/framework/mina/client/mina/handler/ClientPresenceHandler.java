@@ -23,7 +23,7 @@ public class ClientPresenceHandler implements ClientPacketHandler {
         Map<String, Object> data = reader.readObject();
         List<IPresence> presenceInfos = UrsManager.getObjects(IPresence.class);
         for(IPresence presence : presenceInfos){
-            data.put("ONLINE", online == 1);
+            data.put("online", online == 1);
             ThreadUtils.start(new Runnable() {
                 @Override
                 public void run() {

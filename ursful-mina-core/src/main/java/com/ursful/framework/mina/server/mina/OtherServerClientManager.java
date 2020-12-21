@@ -29,7 +29,7 @@ public class OtherServerClientManager {
     public static List<ClientInfo> getAllClientInfos(){
         List<ClientInfo> infos = new ArrayList<ClientInfo>();
         for(ClientInfo info : clientInfoMap.values()){
-            if(info.getData() == null ||  "CLIENT".equals(info.getData().get("CLIENT_TYPE"))) {
+            if(info.getData() == null ||  "CLIENT".equalsIgnoreCase((String) info.getData().get("client_type"))) {
                infos.add(info);
             }
         }

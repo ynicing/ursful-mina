@@ -25,7 +25,7 @@ public class ClientManager {
     public static List<ClientInfo> getClientInfos(){
         List<ClientInfo> list = new ArrayList<ClientInfo>();
         for(Client client : users.values()){
-            if(client.getMetaData() == null ||  "CLIENT".equals(client.getMetaData().get("CLIENT_TYPE"))) {
+            if(client.getMetaData() == null ||  "CLIENT".equalsIgnoreCase((String) client.getMetaData().get("client_type"))) {
                 list.add(new ClientInfo(client.getUser().getCid(), true, client.getMetaData()));
             }
         }
@@ -35,7 +35,7 @@ public class ClientManager {
     public static List<ClientInfo> getClientServerInfos(){
         List<ClientInfo> list = new ArrayList<ClientInfo>();
         for(Client client : users.values()){
-            if(client.getMetaData() != null &&  "SERVER_CLIENT".equals(client.getMetaData().get("CLIENT_TYPE"))) {
+            if(client.getMetaData() != null &&  "SERVER_CLIENT".equalsIgnoreCase((String) client.getMetaData().get("client_type"))) {
                 list.add(new ClientInfo(client.getUser().getCid(), true, client.getMetaData()));
             }
         }
@@ -72,7 +72,7 @@ public class ClientManager {
         ClientUser user = client.getUser();
         if(user != null) {
             logger.info("Register : " + user.getCid() + ">" + client.getMetaData().toString());
-            if("CLIENT".equals(client.getMetaData().get("CLIENT_TYPE"))) {
+            if("CLIENT".equalsIgnoreCase((String) client.getMetaData().get("client_type"))) {
                 List<ClientInfo> us = getClientInfos();
                 us.addAll(OtherServerClientManager.getAllClientInfos());
                 Packet status = PacketCreator.getPresenceInfo(us, true);
@@ -96,7 +96,7 @@ public class ClientManager {
     public static void deregister(Client client){
         ClientUser user = client.getUser();
         if(user != null) {
-            if("CLIENT".equals(client.getMetaData().get("CLIENT_TYPE"))) {
+            if("CLIENT".equalsIgnoreCase((String) client.getMetaData().get("client_type"))) {
                 Packet packet = PacketCreator.getPresence(new ClientInfo(user.getCid(), false, client.getMetaData()));
                 broadcast(packet);
             }else{

@@ -39,9 +39,6 @@ public class InfoHandler implements PacketHandler {
             return;
         }
         String force = (String)metaData.get("force");
-        if(force == null){
-            force = (String)metaData.get("FORCE");
-        }
         Collection<Client> clients = ClientManager.getAllClients();
         if(!"true".equalsIgnoreCase(force)) {
             for (Client client : clients) {
@@ -56,27 +53,25 @@ public class InfoHandler implements PacketHandler {
             }
         }
 
-
-        //metaData.put("PRIORITY_TIME", System.nanoTime());//谁先登录，谁先处理
-        String host = c.getSession().getAttribute("CLIENT_IP").toString();
         ClientUser user = new ClientUser();
         user.setClient(c);
-        user.setCid(serverClientId);
+        user.setCid(serverClientId);// 必须是 id@domain/resource
         c.setUser(user);
         c.setIsServer(isServer == 1);
         if(c.isServer()){
+            String host = (String)c.getSession().getAttribute("client_ip");
             if("localhost".equals(host) || "127.0.0.1".equals(host)){
                 List<String> ips = NetworkUtils.getHostAddress();
                 if(!ips.contains(host)) {
                     ips.add(host);
                 }
-                metaData.put("SERVER_HOST", StringUtils.join(ips));
+                metaData.put("server_host", StringUtils.join(ips));
             }else{
-                metaData.put("SERVER_HOST", host);
+                metaData.put("server_host", host);
             }
 
-            if(metaData.containsKey("SERVER_PORT")) {//自定义不含server port
-                int port = (int) metaData.get("SERVER_PORT");
+            if(metaData.containsKey("server_port")) {//自定义不含server port
+                int port = (int) metaData.get("server_port");
                 List<IClusterClientStatus> statuses = UrsManager.getObjects(IClusterClientStatus.class);
                 for (IClusterClientStatus status : statuses) {
                     ThreadUtils.start(new Runnable() {

@@ -43,7 +43,7 @@ public class PacketCreator {
         writer.writeShort(Opcode.PRESENCE.ordinal());
         writer.writeString(info.getCid());
         writer.writeByte(info.getOnline()?1:0);
-        info.getData().put("ONLINE", info.getOnline());
+        info.getData().put("online", info.getOnline());
         writer.writeObject(info.getData());
         return writer.getPacket();
     }
@@ -53,7 +53,7 @@ public class PacketCreator {
         writer.writeShort(Opcode.SERVER_INFO.ordinal());
         for(ClientInfo key : info) {
             writer.writeString(key.getCid());
-            key.getData().put("ONLINE", true);
+            key.getData().put("online", true);
             writer.writeObject(key.getData());
         }
         return writer.getPacket();
@@ -64,7 +64,7 @@ public class PacketCreator {
         writer.writeShort(Opcode.PRESENCE_INFO.ordinal());
         for(ClientInfo key : info) {
             writer.writeString(key.getCid());
-            key.getData().put("ONLINE", online);
+            key.getData().put("online", online);
             writer.writeObject(key.getData());
         }
         return writer.getPacket();

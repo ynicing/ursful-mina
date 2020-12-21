@@ -28,11 +28,11 @@ public class ClusterClientServerInfoHandler implements ClientPacketHandler {
         while (reader.available() > 0){
             String cid = reader.readString();
             Map<String, Object> data = reader.readObject();
-            data.put("ONLINE", true);
+            data.put("online", true);
             map.put(cid, data);
-            String host = (String)data.get("SERVER_HOST");
-            if(data.containsKey("SERVER_PORT")) {
-                int port = (int) data.get("SERVER_PORT");
+            String host = (String)data.get("server_host");
+            if(data.containsKey("server_port")) {
+                int port = (int) data.get("server_port");
                 List<IClusterClientStatus> statuses = UrsManager.getObjects(IClusterClientStatus.class);
                 for (IClusterClientStatus status : statuses) {
                     String server = "system@" + User.getDomain(writer.getSession().getAttribute("CLIENT_ID").toString());

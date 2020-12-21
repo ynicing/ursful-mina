@@ -69,7 +69,7 @@ public class UrsClient implements Runnable{
 
     public void enableCluster(){
         this.isCluster = true;
-        this.metaData.put("CLIENT_TYPE", "SERVER_CLIENT");
+        this.metaData.put("client_type", "SERVER_CLIENT");
 
         this.clientHandler.register(new ClusterClientPresenceHandler());
         this.clientHandler.register(new ClusterClientPresenceInfoHandler());
@@ -134,7 +134,7 @@ public class UrsClient implements Runnable{
     public UrsClient(String cid, String resource, String host, int port){
         this.clientId = cid;
         this.resource = resource;
-        this.metaData.put("CLIENT_TYPE", "CLIENT");
+        this.metaData.put("client_type", "CLIENT");
         this.currentAddress = new InetSocketAddress(host, port);
         this.addresses.add(this.currentAddress);
         init();
@@ -143,7 +143,7 @@ public class UrsClient implements Runnable{
     public UrsClient(String cid, String resource, String ips){
         this.clientId = cid;
         this.resource = resource;
-        this.metaData.put("CLIENT_TYPE", "CLIENT");
+        this.metaData.put("client_type", "CLIENT");
         addIps(ips);
         if(this.addresses.isEmpty()){
             throw new RuntimeException("No address found.");

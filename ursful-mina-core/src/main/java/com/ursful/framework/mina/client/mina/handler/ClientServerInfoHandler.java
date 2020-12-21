@@ -21,7 +21,7 @@ public class ClientServerInfoHandler implements ClientPacketHandler {
         while (reader.available() > 0){
             String cid = reader.readString();
             Map<String, Object> data = reader.readObject();
-            data.put("ONLINE", true);
+            data.put("online", true);
             map.put(cid, data);
         }
         List<IServerInfo> infos = UrsManager.getObjects(IServerInfo.class);

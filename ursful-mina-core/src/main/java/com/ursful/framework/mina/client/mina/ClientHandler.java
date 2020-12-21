@@ -149,7 +149,7 @@ public class ClientHandler extends IoHandlerAdapter{
 		List<IPresence> presenceInfos = UrsManager.getObjects(IPresence.class);
 		for(IPresence presence : presenceInfos){
 			Map<String, Object> data = client.getMetaData();
-			data.put("ONLINE", false);
+			data.put("online", false);
 			new Thread(new Runnable() {
 				@Override
 				public void run() {

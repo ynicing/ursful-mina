@@ -161,7 +161,7 @@ public class UrsServer implements Runnable{
         for(ClientPacketHandler packetHandler : clientPacketHandlers){
             client.register(packetHandler);
         }
-        client.getMetaData().put("SERVER_PORT", this.port);
+        client.getMetaData().put("server_port", this.port);
         ursClientMap.put(host + ":" + port, client);
         client.run();
     }
