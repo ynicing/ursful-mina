@@ -1,7 +1,6 @@
-package com.ursful.framework.mina.test;
+package com.ursful.framework.mina.test.clientSendDB;
 
 import com.ursful.framework.mina.message.cluster.ClusterClientMessagesHandler;
-import com.ursful.framework.mina.message.server.MessagesHandler;
 import com.ursful.framework.mina.server.UrsServer;
 
 /**
@@ -9,7 +8,7 @@ import com.ursful.framework.mina.server.UrsServer;
  */
 public class ServerWithDB {
     public static void main(String[] args) throws Exception{
-        UrsServer server = new UrsServer("server1", 9090);
+        UrsServer server = new UrsServer("server", 9090);
         server.enableCluster();
         server.register(new ExtMessagesHandler());
         server.register(new ClusterClientMessagesHandler());
