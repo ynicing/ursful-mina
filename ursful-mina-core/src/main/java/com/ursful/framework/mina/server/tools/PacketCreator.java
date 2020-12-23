@@ -43,7 +43,7 @@ public class PacketCreator {
         writer.writeShort(Opcode.PRESENCE.ordinal());
         writer.writeString(info.getCid());
         writer.writeByte(info.getOnline()?1:0);
-        info.getData().put("online", info.getOnline());
+        info.getData().put("online", info.getOnline().toString());
         writer.writeObject(info.getData());
         return writer.getPacket();
     }
