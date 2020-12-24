@@ -147,6 +147,14 @@ public class ByteWriter {
 					bw.writeString(key);
 					bw.writeString("Long");
 					bw.writeLong((Long) value);
+				} else if (value instanceof Boolean) {
+					bw.writeString(key);
+					bw.writeString("Boolean");
+					bw.writeByte(((Boolean)value).booleanValue()?1:0);
+				} else if (value instanceof Float) {
+					bw.writeString(key);
+					bw.writeString("Float");
+					bw.writeFloat((Float) value);
 				}else if(value instanceof Double){
 					bw.writeString(key);
 					bw.writeString("Double");

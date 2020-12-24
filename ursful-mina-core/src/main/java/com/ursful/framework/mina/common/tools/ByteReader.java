@@ -147,6 +147,12 @@ public class ByteReader {
 			} else if ("Double".equalsIgnoreCase(type)) {
 				double value = br.readDouble();
 				temp.put(key, value);
+			} else if ("Boolean".equalsIgnoreCase(type)) {
+				int value = br.readByte();
+				temp.put(key, value == 1);
+			} else if ("Float".equalsIgnoreCase(type)) {
+				double value = br.readFloat();
+				temp.put(key, value);
 			} else if ("Date".equalsIgnoreCase(type)) {
 				long value = br.readLong();
 				temp.put(key, new Date(value));
