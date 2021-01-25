@@ -1,8 +1,11 @@
 package com.ursful.framework.mina.test;
 
+import com.ursful.framework.mina.common.UrsManager;
 import com.ursful.framework.mina.message.cluster.ClusterClientMessagesHandler;
 import com.ursful.framework.mina.message.server.MessagesHandler;
 import com.ursful.framework.mina.server.UrsServer;
+import com.ursful.framework.mina.server.client.*;
+import com.ursful.framework.mina.server.client.Client;
 
 /**
  * 类名：Server1
@@ -13,6 +16,17 @@ import com.ursful.framework.mina.server.UrsServer;
  */
 public class Server {
     public static void main(String[] args) throws Exception{
+        UrsManager.register(new IClientManager() {
+            @Override
+            public void register(Client client) {
+                System.out.println("online:" + client.getUser().getCid());
+            }
+
+            @Override
+            public void deregister(Client client) {
+                System.out.println("offline:" + client.getUser().getCid());
+            }
+        });
         UrsServer server = new UrsServer("server1", 9090);
         server.enableCluster();
         server.register(new MessagesHandler());

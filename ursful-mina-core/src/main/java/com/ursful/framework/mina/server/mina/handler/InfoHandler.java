@@ -7,6 +7,7 @@ import com.ursful.framework.mina.common.tools.*;
 import com.ursful.framework.mina.common.cluster.listener.IClusterClientStatus;
 import com.ursful.framework.mina.server.client.Client;
 import com.ursful.framework.mina.server.client.ClientUser;
+import com.ursful.framework.mina.server.client.IClientManager;
 import com.ursful.framework.mina.server.mina.ClientManager;
 import com.ursful.framework.mina.server.mina.packet.PacketHandler;
 
@@ -87,6 +88,11 @@ public class InfoHandler implements PacketHandler {
         c.getSession().setAttribute(Client.CLIENT_ID_KEY, user.getCid());
 
         ClientManager.register(c);
+
+        List<IClientManager> list = UrsManager.getObjects(IClientManager.class);
+        for(IClientManager manager : list){
+            manager.register(c);
+        }
     }
 
     @Override
