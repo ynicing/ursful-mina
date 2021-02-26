@@ -8,7 +8,7 @@ import com.ursful.framework.mina.server.UrsServer;
  */
 public class ServerWithDB {
     public static void main(String[] args) throws Exception{
-        UrsServer server = new UrsServer("server", 9090);
+        UrsServer server = new UrsServer("server", 19092);
         server.enableCluster();
         server.register(new ExtMessagesHandler());
         server.register(new ClusterClientMessagesHandler());

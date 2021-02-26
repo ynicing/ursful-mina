@@ -5,8 +5,10 @@ import com.ursful.framework.mina.common.packet.Packet;
 import com.ursful.framework.mina.common.tools.AesOfb;
 import com.ursful.framework.mina.common.tools.BitTools;
 import com.ursful.framework.mina.common.tools.ByteReader;
+import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.server.client.IClientManager;
 import com.ursful.framework.mina.server.mina.coder.PacketDecoder;
+import com.ursful.framework.mina.server.mina.support.IServerClientStatus;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -92,7 +94,17 @@ public class ServerHandler extends IoHandlerAdapter {
                 for(IClientManager manager : list){
                     manager.deregister(client);
                 }
-                ClientManager.deregister(client);
+                if(client.isServer()){
+                    ThreadUtils.start(new Runnable() {
+                        @Override
+                        public void run() {
+                            List<IServerClientStatus> statuses = UrsManager.getObjects(IServerClientStatus.class);
+                            for (IServerClientStatus status : statuses) {
+                                status.serverClientClose(client);
+                            }
+                        }
+                    });
+                }
                 client.disconnect();
                 session.removeAttribute(Client.CLIENT_KEY);
                 session.removeAttribute(Client.CLIENT_ID_KEY);

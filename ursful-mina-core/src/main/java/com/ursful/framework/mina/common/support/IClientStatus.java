@@ -9,7 +9,7 @@ import com.ursful.framework.mina.client.UrsClient;
  * 版权：ursful.com Copyright(c) 2017
  * 说明：[类说明必填内容，请修改]
  */
-public interface IClientStatus {
+public interface IClientStatus  extends IOrder{
     default void clientReady(UrsClient client, String cid){
 
     }

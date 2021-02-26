@@ -28,7 +28,7 @@ public class Client2 {
             @Override
             public void clientReady(UrsClient client, String cid) {
                 MessageManager.getManager().setClient(client);
-
+                System.out.println("client:" + client);
                 //给client1 发送消息
                 Message message = new Message();
                 message.setFromCid(cid);
@@ -45,7 +45,8 @@ public class Client2 {
             }
         });
 
-        UrsClient client = new UrsClient("client2", "127.0.0.1", 9090);
+        UrsClient client = new UrsClient("client2", "127.0.0.1", 19092);
+        System.out.println("client:" + client);
         client.register(new ClientMessagesHandler());
         new Thread(client).run();
 

@@ -7,10 +7,16 @@ import com.ursful.framework.mina.common.support.IPAddress;
 import com.ursful.framework.mina.common.tools.DateUtils;
 import com.ursful.framework.mina.common.tools.NetworkUtils;
 import com.ursful.framework.mina.common.cluster.listener.IClusterClientStatus;
+import com.ursful.framework.mina.common.tools.StringUtils;
+import com.ursful.framework.mina.common.tools.ThreadUtils;
+import com.ursful.framework.mina.server.client.Client;
+import com.ursful.framework.mina.server.client.IClientManager;
+import com.ursful.framework.mina.server.mina.DefaultClientManager;
 import com.ursful.framework.mina.server.mina.ServerHandler;
 import com.ursful.framework.mina.server.mina.coder.CodecFactory;
 import com.ursful.framework.mina.server.mina.packet.PacketHandler;
 import com.ursful.framework.mina.server.mina.packet.PacketProcessor;
+import com.ursful.framework.mina.server.mina.support.IServerClientStatus;
 import com.ursful.framework.mina.server.tools.TimerManager;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.buffer.SimpleBufferAllocator;
@@ -64,11 +70,20 @@ public class UrsServer implements Runnable{
 
     private UrsServer(){}
 
+    private IClientManager clientManager = new DefaultClientManager();
+
+    public void setClientManager(IClientManager manager){
+        UrsManager.deregister(manager);
+        clientManager = manager;
+        UrsManager.register(clientManager);
+    }
+
     public UrsServer(String sid, int port) {
     	this.port = port;
         this.sid = sid;
         this.processor = PacketProcessor.getProcessor();
         this.serverHandler = new ServerHandler(this.sid, this.processor);
+        UrsManager.register(clientManager);
     }
 
     public void register(PacketHandler handler){
@@ -90,22 +105,60 @@ public class UrsServer implements Runnable{
     public void run() {
 
         if(enableTransfer) {
+            UrsManager.register(new IServerClientStatus() {
+                @Override
+                public void serverClientConnect(Client client) {
+                    if(client.getMetaData().containsKey("server_port")) {//自定义不含server port
+                        String host = (String)client.getMetaData().get("server_host");
+                        if(host == null){
+                            host = "127.0.0.1";
+                        }
+                        int port = (int) client.getMetaData().get("server_port");
+                        String key = host + ":" + port;
+                        if(!ursClientMap.containsKey(key)) {
+                            createClient(host, port);
+                        }
+                    }
+                }
+
+                @Override
+                public void serverClientClose(Client client) {
+                    String host = (String)client.getMetaData().get("server_host");
+                    if(host == null){
+                        host = "127.0.0.1";
+                    }
+                    int port = (int) client.getMetaData().get("server_port");
+                    String key = host + ":" + port;
+                    UrsClient c = ursClientMap.get(key);
+                    if (c != null) {
+                        logger.info(key + "-----------serverClientClose..remove......." + key);
+                        try {
+                            c.close();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        ursClientMap.remove(key);
+                    }
+                }
+            });
+
+            // 服务客户端
             UrsManager.register(new IClusterClientStatus() {
                 @Override
                 public void serverClientReady(String cid, String host, int port) {
-                    List<String> ips = NetworkUtils.getHostAddress();
-                    ips.add("127.0.0.1");
-                    ips.add("localhost");
-                    if (ips.contains(host) && getPort() == port) {
-                        return;
-                    }
-                    String key = host + ":" + port;
-                    if (!ursClientMap.containsKey(key)) {
-                        logger.info(cid + "-----------serverClientReady. add new........" + key);
-                        createClient(host, port);
-                    } else {
-                        logger.info(cid + "-----------serverClientReady. existed........" + key);
-                    }
+//                    List<String> ips = NetworkUtils.getHostAddress();
+//                    ips.add("127.0.0.1");
+//                    ips.add("localhost");
+//                    if (ips.contains(host) && getPort() == port) {
+//                        return;
+//                    }
+//                    String key = host + ":" + port;
+//                    if (!ursClientMap.containsKey(key)) {
+//                        logger.info(cid + "-----------serverClientReady. add new........" + key);
+//                        createClient(host, port);
+//                    } else {
+//                        logger.info(cid + "-----------serverClientReady. existed........" + key);
+//                    }
                 }
 
                 @Override
@@ -113,13 +166,13 @@ public class UrsServer implements Runnable{
                     String key = host + ":" + port;
                     UrsClient c = ursClientMap.get(key);
                     if (c != null) {
-                        logger.info(cid + "-----------serverClientClose..remove......." + key);
+                        logger.info("remove server-client: " + cid + ">" + key);
                         c.close();
                         ursClientMap.remove(key);
                     } else {
-                        logger.info(cid + "-----------serverClientClose..not exist......." + key);
+                        logger.info("remove server-client note exist: " + cid + ">" + key);
                     }
-
+                    //当server1 断开 server2时，将对应的用户信息全部标记为离线
                 }
             });
         }
@@ -155,6 +208,13 @@ public class UrsServer implements Runnable{
     }
 
 
+    public void close(){
+        acceptor.dispose();
+        TimerManager manager = TimerManager.getInstance();
+        manager.stop();
+
+    }
+
     private void createClient(String host, int port){
         UrsClient client = new UrsClient(this.sid, host, port);
         client.enableCluster();
@@ -164,6 +224,8 @@ public class UrsServer implements Runnable{
         client.getMetaData().put("server_port", this.port);
         ursClientMap.put(host + ":" + port, client);
         client.run();
+
+        logger.info("create server-client:" + host + ":" + port);
     }
 
 }

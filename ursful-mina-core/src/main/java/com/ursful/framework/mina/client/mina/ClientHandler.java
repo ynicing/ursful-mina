@@ -82,7 +82,6 @@ public class ClientHandler extends IoHandlerAdapter{
 					int version = reader.readShort();
 					this.serverId = reader.readString();
 					this.client.setServerId(this.serverId);
-					logger.info((client.isCluster() ? "cluster server version:" : "server version:") + version + ">" + this.serverId);
 					if(reader.available() > 0) {
 						byte[] sendIv = reader.readBytes();
 						byte[] recvIv = reader.readBytes();
@@ -93,7 +92,7 @@ public class ClientHandler extends IoHandlerAdapter{
 					Opcode code = Opcode.INFO;
 					Packet packet = ClientPacketCreator.getClientInfo(code, this.serverId, this.cid, this.resource, client.isCluster(), client.getMetaData());
 					session.write(packet);
-					logger.info("sent:" + this.cid + ">" + this.serverId + ">" + client.getMetaData());
+					logger.info((client.isCluster()?"server-client":"client") + " " + this.cid + "@" + this.serverId + " meta-data:" + client.getMetaData());
 					String csid = cid + "@" + serverId;
 					if(resource != null){
 						csid += "/" + resource;
@@ -102,17 +101,17 @@ public class ClientHandler extends IoHandlerAdapter{
 					session.setAttribute(Client.CLIENT_ID_KEY, clientServerId);
 					writer = new PacketWriter(session);
 					writer.startup();
-					List<IClientStatus> statuses = UrsManager.getObjects(IClientStatus.class);
 					UrsClient thisClient = this.client;
-					for(IClientStatus status : statuses){
-						ThreadUtils.start(new Runnable() {
-							@Override
-							public void run() {
-								status.clientReady(thisClient, clientServerId);
-								status.clientReady(clientServerId);
-							}
-						});
-					}
+					thisClient.clientReady();
+//					for(IClientStatus status : statuses){
+//						ThreadUtils.start(new Runnable() {
+//							@Override
+//							public void run() {
+//								status.clientReady(thisClient, clientServerId);
+//								status.clientReady(clientServerId);
+//							}
+//						});
+//					}
 				}
 			}
 		}else{
@@ -146,17 +145,19 @@ public class ClientHandler extends IoHandlerAdapter{
 		if(clientServerId == null){
 			return;
 		}
-		List<IPresence> presenceInfos = UrsManager.getObjects(IPresence.class);
-		for(IPresence presence : presenceInfos){
-			Map<String, Object> data = client.getMetaData();
-			data.put("online", false);
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					presence.presence(clientServerId,false,client.getMetaData());
+
+		Map<String, Object> data = client.getMetaData();
+		data.put("online", false);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				List<IPresence> presenceInfos = UrsManager.getObjects(IPresence.class);
+				for(IPresence presence : presenceInfos){
+					presence.presence(clientServerId, false, client.getMetaData());
 				}
-			}).start();
-		}
+			}
+		}).start();
+
 	}
 
 	@Override

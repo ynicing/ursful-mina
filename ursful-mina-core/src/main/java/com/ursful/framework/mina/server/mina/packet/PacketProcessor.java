@@ -26,7 +26,6 @@ public final class PacketProcessor {
         processor.register(new TestHandler());
         processor.register(new KeepAliveHandler());
         processor.register(new InfoHandler());
-        processor.register(new ServerInfoHandler());
         return processor;
     }
 

@@ -16,19 +16,9 @@ import com.ursful.framework.mina.server.client.Client;
  */
 public class Server {
     public static void main(String[] args) throws Exception{
-        UrsManager.register(new IClientManager() {
-            @Override
-            public void register(Client client) {
-                System.out.println("online:" + client.getUser().getCid());
-            }
-
-            @Override
-            public void deregister(Client client) {
-                System.out.println("offline:" + client.getUser().getCid());
-            }
-        });
-        UrsServer server = new UrsServer("server1", 9090);
+        UrsServer server = new UrsServer("server1", 19090);
         server.enableCluster();
+        server.setClusterIps("127.0.0.1:19091");
         server.register(new MessagesHandler());
         server.register(new ClusterClientMessagesHandler());
         new Thread(server).start();

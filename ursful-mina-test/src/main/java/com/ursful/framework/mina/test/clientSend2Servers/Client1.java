@@ -28,7 +28,7 @@ public class Client1 {
             @Override
             public void message(Message message, MessageSession session) {
                 Message reply = message.reply();
-//                reply.put("an", "hello");
+                reply.put("an", "hello");
                 session.sendMessage(reply);
             }
         });
@@ -60,7 +60,7 @@ public class Client1 {
             }
         });
 
-        UrsClient client = new UrsClient("client2", "127.0.0.1", 9091);
+        UrsClient client = new UrsClient("client2", "127.0.0.1", 19091);
 
         client.register(new ClientMessagesHandler());
 

@@ -19,11 +19,11 @@ public class ClientPacketCreator {
         return writer.getPacket();
     }
 
-    public static Packet getServerInfo(){
-        ByteWriter writer = new ByteWriter();
-        writer.writeShort(Opcode.SERVER_INFO.ordinal());
-        return writer.getPacket();
-    }
+//    public static Packet getServerInfo(){
+//        ByteWriter writer = new ByteWriter();
+//        writer.writeShort(Opcode.SERVER_INFO.ordinal());
+//        return writer.getPacket();
+//    }
 
     public static Packet getPing(){
         long time = System.currentTimeMillis();

@@ -8,6 +8,7 @@ import com.ursful.framework.mina.common.UrsManager;
 import com.ursful.framework.mina.common.support.IClientStatus;
 import com.ursful.framework.mina.message.MessageManager;
 import com.ursful.framework.mina.message.client.IMessage;
+import com.ursful.framework.mina.message.cluster.ClusterClientMessagesHandler;
 import com.ursful.framework.mina.message.support.Message;
 import com.ursful.framework.mina.message.support.MessageSession;
 
@@ -57,9 +58,9 @@ public class ClusterClient {
             }
         });
 
-        UrsClient client = new UrsClient("websocket", "127.0.0.1", 9090);
+        UrsClient client = new UrsClient("websocket", "127.0.0.1", 19090);
         client.enableCluster();
-        client.register(new ExtClusterClientMessagesHandler());
+        client.register(new ClusterClientMessagesHandler());
 
         new Thread(client).run();
 

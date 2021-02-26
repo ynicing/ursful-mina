@@ -1,5 +1,8 @@
 package com.ursful.framework.mina.server.client;
 
+import com.ursful.framework.mina.common.support.IOrder;
+import com.ursful.framework.mina.server.mina.ClientInfo;
+
 /**
  * <p>项目名称: ursful-mina </p>
  * <p>描述:  </p>
@@ -8,7 +11,8 @@ package com.ursful.framework.mina.server.client;
  *
  * @author huangyonghua, jlis@qq.com
  */
-public interface IClientManager {
+public interface IClientManager  extends IOrder {
     void register(Client client);
     void deregister(Client client);
+    default void registerServerClient(ClientInfo info){};
 }

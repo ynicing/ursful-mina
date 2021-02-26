@@ -1,6 +1,5 @@
 package com.ursful.framework.mina.client;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,10 +13,10 @@ import com.ursful.framework.mina.client.mina.packet.ClientPacketHandler;
 import com.ursful.framework.mina.common.UrsManager;
 import com.ursful.framework.mina.common.packet.Packet;
 import com.ursful.framework.mina.common.support.IClientStatus;
+import com.ursful.framework.mina.common.support.IPAddress;
 import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.common.cluster.handler.ClusterClientPresenceHandler;
 import com.ursful.framework.mina.common.cluster.handler.ClusterClientPresenceInfoHandler;
-import com.ursful.framework.mina.common.cluster.handler.ClusterClientServerInfoHandler;
 import com.ursful.framework.mina.common.cluster.listener.IClusterClientStatus;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoService;
@@ -47,10 +46,8 @@ public class UrsClient implements Runnable{
         return metaData;
     }
 
-    private InetSocketAddress currentAddress;
-
-//    private List<IClientStartup> startups = new ArrayList<IClientStartup>();
-
+    private IPAddress currentAddress;
+    private List<IPAddress> addresses = new ArrayList<IPAddress>();
 
     public void setMetaData(Map<String, Object> metaData) {
         if(metaData != null) {
@@ -73,8 +70,6 @@ public class UrsClient implements Runnable{
 
         this.clientHandler.register(new ClusterClientPresenceHandler());
         this.clientHandler.register(new ClusterClientPresenceInfoHandler());
-        this.clientHandler.register(new ClusterClientServerInfoHandler());
-
     }
 
     public boolean isCluster(){
@@ -124,7 +119,6 @@ public class UrsClient implements Runnable{
         this.clientHandler = new ClientHandler(this);
         this.clientHandler.register(new ClientPresenceHandler());
         this.clientHandler.register(new ClientPresenceInfoHandler());
-        this.clientHandler.register(new ClientServerInfoHandler());
     }
 
     public String getResource(){
@@ -135,7 +129,7 @@ public class UrsClient implements Runnable{
         this.clientId = cid;
         this.resource = resource;
         this.metaData.put("client_type", "CLIENT");
-        this.currentAddress = new InetSocketAddress(host, port);
+        this.currentAddress = new IPAddress(host, port);
         this.addresses.add(this.currentAddress);
         init();
     }
@@ -156,7 +150,6 @@ public class UrsClient implements Runnable{
         this(cid, null, ips);
     }
 
-    private List<InetSocketAddress> addresses = new ArrayList<InetSocketAddress>();
 
     public void addIps(String ips){
         if(ips != null) {
@@ -164,7 +157,7 @@ public class UrsClient implements Runnable{
             for (String ipStr : ip) {
                 String[] ipAndPort = ipStr.split(":");
                 if (ipAndPort.length == 2) {
-                    this.addresses.add(new InetSocketAddress(ipAndPort[0], Integer.parseInt(ipAndPort[1])));
+                    this.addresses.add(new IPAddress(ipAndPort[0], Integer.parseInt(ipAndPort[1])));
                 }
             }
         }
@@ -231,52 +224,68 @@ public class UrsClient implements Runnable{
                 }
                 @Override
                 public void sessionDestroyed(IoSession arg0) throws Exception {
-                    if(!isCluster()) {
-                        List<IClientStatus> statuses = UrsManager.getObjects(IClientStatus.class);
-                        for (IClientStatus status : statuses) {
-                            ThreadUtils.start(new Runnable() {
-                                @Override
-                                public void run() {
-                                    status.clientClose(thisClient, getCid());
-                                    status.clientClose(getCid());
-                                }
-                            });
-                        }
-                        reconnect();
-                    }else{
-                        List<IClusterClientStatus> statuses = UrsManager.getObjects(IClusterClientStatus.class);
-                        for (IClusterClientStatus status : statuses) {
-                            ThreadUtils.start(new Runnable() {
-                                @Override
-                                public void run() {
-                                    status.serverClientClose(getCid(), currentAddress.getHostName(), currentAddress.getPort());
-                                }
-                            });
-                        }
-                    }
+                    clientClose(thisClient);
                 }
             });
 
-            if(!isCluster()) {
-                reconnect();
-            }else{
-                if(!connect(this.currentAddress)) {
-                    List<IClusterClientStatus> statuses = UrsManager.getObjects(IClusterClientStatus.class);
-                    for (IClusterClientStatus status : statuses) {
-                        ThreadUtils.start(new Runnable() {
-                            @Override
-                            public void run() {
-                                status.serverClientClose(getCid(), currentAddress.getHostName(), currentAddress.getPort());
-                            }
-                        });
-                    }
-                }
+            if(!connect(this.currentAddress)) {
+                clientClose(thisClient);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
 
+    private void clientClose(UrsClient thisClient){
+        if(!isCluster()) {
+            ThreadUtils.start(new Runnable() {
+                @Override
+                public void run() {
+                    List<IClientStatus> statuses = UrsManager.getObjects(IClientStatus.class);
+                    for (IClientStatus status : statuses) {
+                        status.clientClose(thisClient, getCid());
+                    }
+                }
+            });
+            reconnect();
+        }else{
+            ThreadUtils.start(new Runnable() {
+                @Override
+                public void run() {
+                    List<IClusterClientStatus> statuses = UrsManager.getObjects(IClusterClientStatus.class);
+                    for (IClusterClientStatus status : statuses) {
+                        status.serverClientClose(getCid(), currentAddress.getIp(), currentAddress.getPort());
+                    }
+                }
+            });
+        }
+    }
 
+    public void clientReady(){
+        UrsClient thisClient = this;
+        if(!isCluster()) {
+            //等待 ClientHandler中的clientReady
+            ThreadUtils.start(new Runnable() {
+                @Override
+                public void run() {
+                    List<IClientStatus> statuses = UrsManager.getObjects(IClientStatus.class);
+                    for (IClientStatus status : statuses) {
+                        status.clientReady(thisClient, getCid());
+                        status.clientReady(getCid());
+                    }
+                }
+            });
+        }else{
+            ThreadUtils.start(new Runnable() {
+                @Override
+                public void run() {
+                    List<IClusterClientStatus> statuses = UrsManager.getObjects(IClusterClientStatus.class);
+                    for (IClusterClientStatus status : statuses) {
+                        status.serverClientReady(getCid(), currentAddress.getIp(), currentAddress.getPort());
+                    }
+                }
+            });
+        }
     }
 
     private void reconnect(){
@@ -284,7 +293,7 @@ public class UrsClient implements Runnable{
             return;
         }
         for (;;) {
-            InetSocketAddress address = null;
+            IPAddress address = null;
             int length = addresses.size();
             if(length == 1){
                 address = addresses.get(0);
@@ -310,16 +319,16 @@ public class UrsClient implements Runnable{
         }
     }
 
-    private boolean connect(InetSocketAddress address) {
+    private boolean connect(IPAddress address) {
         try {
             this.currentAddress = address;
-            ConnectFuture future = connector.connect(address);
+            ConnectFuture future = connector.connect(new InetSocketAddress(address.getIp(), address.getPort()));
             future.awaitUninterruptibly(); // 等待连接创建成功
             session = future.getSession(); // 获取会话
-            logger.info("[" + this.clientId + "] Successful. Free Mem:" + Runtime.getRuntime().freeMemory() / 1024.0 / 1024.0 + "MB");
+            logger.info(this.clientId + " Successful. Free Mem:" + Runtime.getRuntime().freeMemory() / 1024.0 / 1024.0 + "MB");
             return true;
         } catch (Exception e) {
-            logger.warn("[" + this.clientId + "]Connecting...[" + address + "]");
+            logger.warn(this.clientId + " Connecting...[" + address + "]");
         }
         return false;
     }

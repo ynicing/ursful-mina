@@ -36,7 +36,7 @@ public class Client {
             }
         });
 
-        UrsClient client = new UrsClient("client", "127.0.0.1", 9090);
+        UrsClient client = new UrsClient("client", "127.0.0.1", 19090);
         client.getMetaData().put("force", "true");
         client.register(new ClientMessagesHandler());
         new Thread(client).run();

@@ -14,9 +14,9 @@ import com.ursful.framework.mina.server.UrsServer;
 public class Server2 {
 
     public static void main(String[] args) throws Exception{
-        UrsServer server = new UrsServer("server2", 9091);
+        UrsServer server = new UrsServer("server2", 19091);
         server.enableCluster();
-        server.setClusterIps("127.0.0.1:9090");
+        server.setClusterIps("127.0.0.1:19090");
         server.register(new MessagesHandler());
         server.register(new ClusterClientMessagesHandler());
         new Thread(server).start();

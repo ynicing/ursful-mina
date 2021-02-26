@@ -12,35 +12,35 @@ import java.util.*;
  * 说明：[类说明必填内容，请修改]
  */
 public class OtherServerClientManager {
-    private static Map<String, ClientInfo> clientInfoMap = new HashMap<String, ClientInfo>();
-
-    public static List<ClientInfo> removeClientInfo(String serverId){
-        List<ClientInfo> infos = new ArrayList<ClientInfo>();
-        Set<String> cids = new HashSet<String>(clientInfoMap.keySet());
-        for(String cid : cids){
-            if(cid.endsWith("@" + serverId)){
-                infos.add(clientInfoMap.get(cid));
-                clientInfoMap.remove(cid);
-            }
-        }
-        return infos;
-    }
-
-    public static List<ClientInfo> getAllClientInfos(){
-        List<ClientInfo> infos = new ArrayList<ClientInfo>();
-        for(ClientInfo info : clientInfoMap.values()){
-            if(info.getData() == null ||  "CLIENT".equalsIgnoreCase((String) info.getData().get("client_type"))) {
-               infos.add(info);
-            }
-        }
-        return infos;
-    }
-
-    public static void register(ClientInfo info){
-        clientInfoMap.put(info.getCid(), info);
-    }
-
-    public static void deregister(ClientInfo info){
-        clientInfoMap.remove(info.getCid());
-    }
+//    private static Map<String, ClientInfo> clientInfoMap = new HashMap<String, ClientInfo>();
+//
+//    public static List<ClientInfo> removeClientInfo(String serverId){
+//        List<ClientInfo> infos = new ArrayList<ClientInfo>();
+//        Set<String> cids = new HashSet<String>(clientInfoMap.keySet());
+//        for(String cid : cids){
+//            if(cid.endsWith("@" + serverId)){
+//                infos.add(clientInfoMap.get(cid));
+//                clientInfoMap.remove(cid);
+//            }
+//        }
+//        return infos;
+//    }
+//
+//    public static List<ClientInfo> getAllClientInfos(){
+//        List<ClientInfo> infos = new ArrayList<ClientInfo>();
+//        for(ClientInfo info : clientInfoMap.values()){
+//            if(info.getData() == null ||  "CLIENT".equalsIgnoreCase((String) info.getData().get("client_type"))) {
+//               infos.add(info);
+//            }
+//        }
+//        return infos;
+//    }
+//
+//    public static void register(ClientInfo info){
+//        clientInfoMap.put(info.getCid(), info);
+//    }
+//
+//    public static void deregister(ClientInfo info){
+//        clientInfoMap.remove(info.getCid());
+//    }
 }

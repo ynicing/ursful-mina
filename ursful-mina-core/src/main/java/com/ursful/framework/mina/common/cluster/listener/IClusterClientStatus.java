@@ -1,5 +1,7 @@
 package com.ursful.framework.mina.common.cluster.listener;
 
+import com.ursful.framework.mina.common.support.IOrder;
+
 /**
  * 类名：IClientReady
  * 创建者：huangyonghua
@@ -7,7 +9,7 @@ package com.ursful.framework.mina.common.cluster.listener;
  * 版权：ursful.com Copyright(c) 2017
  * 说明：[类说明必填内容，请修改]
  */
-public interface IClusterClientStatus {
+public interface IClusterClientStatus  extends IOrder {
     void serverClientReady(String fromCid, String host, int port);
     void serverClientClose(String fromCid, String host, int port);
 }

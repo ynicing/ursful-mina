@@ -36,14 +36,11 @@ public class Client {
     private int lastActionId = 0;
     public int packetnum = 0;
 
-    private boolean isServer;
-
     public boolean isServer() {
-        return isServer;
-    }
-
-    public void setIsServer(boolean isServer) {
-        this.isServer = isServer;
+        if (getMetaData() == null){
+            return false;
+        }
+        return "SERVER_CLIENT".equalsIgnoreCase((String)getMetaData().get("client_type"));
     }
 
     private Map<String, Object> metaData;
@@ -240,7 +237,6 @@ public class Client {
     public String toString() {
         return "Client{" +
                 "user=" + user +
-                ", isServer=" + isServer +
                 '}';
     }
 }

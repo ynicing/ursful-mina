@@ -21,16 +21,23 @@ public class ClientPresenceHandler implements ClientPacketHandler {
         String cid = reader.readString();
         int online = reader.readByte();
         Map<String, Object> data = reader.readObject();
-        List<IPresence> presenceInfos = UrsManager.getObjects(IPresence.class);
-        for(IPresence presence : presenceInfos){
-            data.put("online", online == 1);
-            ThreadUtils.start(new Runnable() {
-                @Override
-                public void run() {
-                    presence.presence(cid, online == 1, data);
+        ThreadUtils.start(new Runnable() {
+            @Override
+            public void run() {
+                List<IPresence> presenceInfos = UrsManager.getObjects(IPresence.class);
+                for(IPresence presence : presenceInfos){
+                    if(online == 1) {
+                        data.put("online", true);
+                        presence.presence(cid, true, data);
+                    }else if(online == 0){
+                        data.put("online", false);
+                        presence.presence(cid, false, data);
+                    }else if(online == 2){//change
+                        presence.presenceChange(cid, data);
+                    }
                 }
-            });
-        }
+            }
+        });
     }
 
 }

@@ -26,7 +26,7 @@ public class ClientMessagesHandler implements ClientPacketHandler {
 
     public void handlePacket(ByteReader reader, PacketWriter writer) {
         Message message = Message.parseMessage(reader);
-        logger.info("Client Messages:" + message.toString());
+        logger.debug("Client Messages:" + message.toString());
         if(!message.getId().startsWith("reply-")) {//不是回复类消息
             List<IMessage> messages = MessageManager.getManager().getMessages();
             for (IMessage imsg : messages) {

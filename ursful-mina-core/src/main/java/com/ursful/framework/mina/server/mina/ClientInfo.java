@@ -1,5 +1,6 @@
 package com.ursful.framework.mina.server.mina;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -9,18 +10,24 @@ import java.util.Map;
  * 版权：ursful.com Copyright(c) 2017
  * 说明：[类说明必填内容，请修改]
  */
-public class ClientInfo {
+public class ClientInfo implements Serializable{
+
+    private static final long serialVersionUID = 1L;
 
     private String cid;
     private Boolean online;
     private Map<String, Object> data;
 
-    public ClientInfo(){}
+    private ClientInfo(){}
 
     public ClientInfo(String cid, Boolean online, Map<String, Object> data){
         this.cid = cid;
         this.online = online;
         this.data = data;
+    }
+
+    public boolean isServer(){
+        return "SERVER_CLIENT".equalsIgnoreCase((String)data.get("client_type"));
     }
 
     public String getCid() {

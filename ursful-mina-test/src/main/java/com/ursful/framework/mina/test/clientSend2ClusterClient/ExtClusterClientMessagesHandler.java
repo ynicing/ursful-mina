@@ -24,7 +24,7 @@ public class ExtClusterClientMessagesHandler extends ClusterClientMessagesHandle
         String toCid = reader.readString();
         byte[] data = reader.readBytes();// Message内容
         if(Message.BROADCAST.equals(type)){//send to everybody.
-            ClientManager.broadcastWithoutServer(new ByteArrayPacket(data));
+            ClientManager.broadcastClients(new ByteArrayPacket(data));
             return;
         }
         Client client = ClientManager.getClient(toCid);

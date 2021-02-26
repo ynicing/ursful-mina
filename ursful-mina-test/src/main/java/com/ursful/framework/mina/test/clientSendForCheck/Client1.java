@@ -40,7 +40,7 @@ public class Client1 {
 
 
 
-        UrsClient client = new UrsClient("client2", "127.0.0.1", 9090);
+        UrsClient client = new UrsClient("client2", "127.0.0.1", 19090);
 
         client.register(new ClientMessagesHandler());
 

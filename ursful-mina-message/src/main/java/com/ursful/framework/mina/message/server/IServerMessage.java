@@ -1,5 +1,6 @@
 package com.ursful.framework.mina.message.server;
 
+import com.ursful.framework.mina.common.support.IOrder;
 import com.ursful.framework.mina.message.support.Message;
 import com.ursful.framework.mina.server.client.Client;
 
@@ -10,6 +11,6 @@ import com.ursful.framework.mina.server.client.Client;
  * 版权：ursful.com Copyright(c) 2017
  * 说明：[类说明必填内容，请修改]
  */
-public interface IServerMessage {
+public interface IServerMessage  extends IOrder {
     void received(Message message, Client client);
 }

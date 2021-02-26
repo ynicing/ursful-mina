@@ -26,15 +26,15 @@ public class ClientPresenceInfoHandler implements ClientPacketHandler{
             Map<String, Object> data = reader.readObject();
             map.put(cid, data);
         }
-        List<IPresenceInfo> presenceInfos = UrsManager.getObjects(IPresenceInfo.class);
-        for(IPresenceInfo info : presenceInfos){
-            ThreadUtils.start(new Runnable() {
-                @Override
-                public void run() {
+        ThreadUtils.start(new Runnable() {
+            @Override
+            public void run() {
+                List<IPresenceInfo> presenceInfos = UrsManager.getObjects(IPresenceInfo.class);
+                for(IPresenceInfo info : presenceInfos) {
                     info.presences(map);
                 }
-            });
-        }
+            }
+        });
     }
 
 }
