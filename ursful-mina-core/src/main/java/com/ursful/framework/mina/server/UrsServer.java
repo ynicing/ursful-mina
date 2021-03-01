@@ -101,6 +101,14 @@ public class UrsServer implements Runnable{
 
     private Map<String, UrsClient> ursClientMap = new HashMap<String, UrsClient>();
 
+    private Runnable gcTask = new Runnable() {
+        @Override
+        public void run() {
+            System.gc();
+            logger.info("System.gc");
+        }
+    };
+
     @Override
     public void run() {
 
@@ -198,20 +206,14 @@ public class UrsServer implements Runnable{
         }
 
         TimerManager manager = TimerManager.getInstance();
-        manager.register(new Runnable() {
-            @Override
-            public void run() {
-                System.gc();
-                logger.info("System.gc");
-            }
-        }, 24*3600*1000, DateUtils.getTimeMillisToNextDate());//每天一次垃圾回收。
+        manager.register(gcTask, 24*3600*1000, DateUtils.getTimeMillisToNextDate());//每天一次垃圾回收。
     }
 
 
     public void close(){
         acceptor.dispose();
         TimerManager manager = TimerManager.getInstance();
-        manager.stop();
+        manager.remove(gcTask);
 
     }
 

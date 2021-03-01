@@ -87,7 +87,7 @@ public class MessagesHandler implements PacketHandler {
             sendLocalServer(reader.getBytes());//本地服务
             //转发到其他服务。
             Collection<Client> clients = ClientManager.getServerClients();
-            logger.info("sent to server-client clients:" + clients);
+            logger.debug("sent to server-client clients:" + clients);
             for (Client client : clients) {
                 //message.setToCid("all@" + client.getUser().getId());
                 Packet packet = PacketCreator.getMessageTransfer(

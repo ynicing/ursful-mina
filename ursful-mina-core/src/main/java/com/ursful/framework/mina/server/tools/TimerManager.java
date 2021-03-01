@@ -92,6 +92,13 @@ public class TimerManager implements TimerManagerMBean {
         return schedule(r, timestamp - System.currentTimeMillis());
     }
 
+    public boolean remove(Runnable r){
+        if(ses != null) {
+            return ses.remove(r);
+        }
+        return true;
+    }
+
 
     public long getActiveCount() {
         return ses.getActiveCount();

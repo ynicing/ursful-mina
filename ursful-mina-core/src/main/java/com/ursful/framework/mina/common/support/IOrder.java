@@ -1,12 +1,11 @@
 package com.ursful.framework.mina.common.support;
 
 /**
- * <p>项目名称: ursful-mina </p>
- * <p>描述:  </p>
+ * 类名：IOrder
+ * 创建者：huangyonghua
  * <p>创建时间:2021/2/26 8:14 </p>
- * <p>公司信息:厦门海迈科技股份有限公司&gt;研发中心&gt;框架组</p>
- *
- * @author huangyonghua, jlis@qq.com
+ * 版权：ursful.com Copyright(c) 2017
+ * 说明：[类说明必填内容，请修改]
  */
 public interface IOrder {
     default int order() {
