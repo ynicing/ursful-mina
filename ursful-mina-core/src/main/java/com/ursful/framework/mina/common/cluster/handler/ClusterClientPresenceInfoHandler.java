@@ -25,13 +25,14 @@ public class ClusterClientPresenceInfoHandler implements ClientPacketHandler{
      * @param writer
      */
     public void handlePacket(ByteReader reader, PacketWriter writer) {
-
+        boolean isTransfer = reader.readByte() == 1;
         List<ClientInfo> infos = new ArrayList<ClientInfo>();
         while (reader.available() > 0){
             String cid = reader.readString();
             int online = reader.readByte();
             Map<String, Object> data = reader.readObject();
             ClientInfo info = new ClientInfo(cid, online == 1, data);
+            info.setTransfer(isTransfer);
             infos.add(info);
         }
 

@@ -23,12 +23,13 @@ public class ClusterClientPresenceHandler implements ClientPacketHandler {
      * @param writer
      */
     public void handlePacket(ByteReader reader, PacketWriter writer) {
+        boolean isTransfer = reader.readByte() == 1;
         String cid = reader.readString();// 当前为server1， test2 登录 server2， 那么， cid = test2@server2
         int online = reader.readByte();
         int changed = reader.readByte();
         Map<String, Object> data = reader.readObject();
         ClientInfo info = new ClientInfo(cid, online == 1, changed == 1, data);
-
+        info.setTransfer(isTransfer);
         List<IClusterPresence> presenceInfos = UrsManager.getObjects(IClusterPresence.class);
         for(IClusterPresence presence : presenceInfos){
             if(info.isChanged()){

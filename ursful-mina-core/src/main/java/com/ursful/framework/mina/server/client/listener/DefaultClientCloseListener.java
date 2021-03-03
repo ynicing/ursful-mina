@@ -22,7 +22,7 @@ public class DefaultClientCloseListener implements IClientCloseListener {
         ClientUser user = client.getUser();
         if(user != null) {
             if(!client.isServer()) {
-                Packet packet = PacketCreator.getPresence(new ClientInfo(user.getCid(), false, client.getMetaData()));
+                Packet packet = PacketCreator.getPresence(new ClientInfo(user.getCid(), false, client.getMetaData()), false);
                 ClientManager.broadcastClients(packet);//本地服务端的客户端
                 ClientManager.broadcastServerClients(packet);//其他服务端的客户端
             }else{

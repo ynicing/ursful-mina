@@ -21,7 +21,7 @@ public class DefaultClusterPresenceInfo implements IClusterPresenceInfo {
         for (ClientInfo clientInfo : clientInfos) {
             ClientManager.updateClientInfo(clientInfo);
         }
-        Packet packet = PacketCreator.getPresenceInfo(clientInfos);
+        Packet packet = PacketCreator.getPresenceInfo(clientInfos, true);
         ClientManager.broadcastClients(packet);//转发，本地所有客户端。
     }
 }

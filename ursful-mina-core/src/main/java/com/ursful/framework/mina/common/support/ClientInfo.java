@@ -18,6 +18,16 @@ public class ClientInfo implements Serializable{
     private boolean online;
     private boolean changed = false;
     private boolean server = false;
+    private boolean transfer = false;
+
+    public boolean isTransfer() {
+        return transfer;
+    }
+
+    public void setTransfer(boolean transfer) {
+        this.transfer = transfer;
+    }
+
     private Map<String, Object> data;
 
     private ClientInfo(){}

@@ -33,7 +33,7 @@ public class ServerClientTest {
 
     @Before
     public void before(){
-        server = new UrsServer("server1", 19090);
+        server = new UrsServer("server1", 19092);
         server.enableCluster();
         server.setClusterIps("127.0.0.1:19091");
         server.register(new MessagesHandler());
@@ -80,7 +80,7 @@ public class ServerClientTest {
             }
         });
 
-        UrsClient client = new UrsClient("client", "127.0.0.1", 19090);
+        UrsClient client = new UrsClient("client", "127.0.0.1", 19092);
         client.getMetaData().put("force", "true");
         client.register(new ClientMessagesHandler());
         new Thread(client).run();

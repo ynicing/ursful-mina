@@ -34,7 +34,7 @@ public class PresenceTest {
 
     @Before
     public void before(){
-        server = new UrsServer("PresenceTest", 19090);
+        server = new UrsServer("PresenceTest", 19091);
         server.enableCluster();
         server.register(new MessagesHandler());
         server.register(new ClusterClientMessagesHandler());
@@ -70,7 +70,7 @@ public class PresenceTest {
             }
         });
 
-        client = new UrsClient("client", "127.0.0.1", 19090);
+        client = new UrsClient("client", "127.0.0.1", 19091);
         client.getMetaData().put("force", "true");
         client.register(new ClientMessagesHandler());
         new Thread(client).run();

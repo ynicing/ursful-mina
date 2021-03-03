@@ -24,15 +24,15 @@ public class DefaultClientInfoListener implements IClientInfoListener {
         if(user != null) {
             if (!client.isServer()) {
                 List<ClientInfo> us = ClientManager.getAllClientsInfo();
-                Packet status = PacketCreator.getPresenceInfo(us);
+                Packet status = PacketCreator.getPresenceInfo(us, false);
                 client.write(status);//客户端发送当前所有客户端在线状态
 
-                Packet packet = PacketCreator.getPresence(new ClientInfo(user.getCid(), true, client.getMetaData()));
+                Packet packet = PacketCreator.getPresence(new ClientInfo(user.getCid(), true, client.getMetaData()), false);
                 ClientManager.broadcastClients(packet);//本地服务端的客户端
                 ClientManager.broadcastServerClients(packet);//其他服务端的客户端
             }else{
                 List<ClientInfo> us = ClientManager.getClientsInfo();
-                Packet status = PacketCreator.getPresenceInfo(us);
+                Packet status = PacketCreator.getPresenceInfo(us, false);
                 client.write(status);//客户端发送当前所有客户端在线状态
             }
         }

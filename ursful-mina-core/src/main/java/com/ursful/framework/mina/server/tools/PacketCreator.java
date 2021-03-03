@@ -38,9 +38,10 @@ public class PacketCreator {
         return writer.getPacket();
     }
 
-    public static Packet getPresence(ClientInfo info) {//String cid, int ops, int type,
+    public static Packet getPresence(ClientInfo info, boolean isTransfer) {//String cid, int ops, int type,
         ByteWriter writer = new ByteWriter();
         writer.writeShort(Opcode.PRESENCE.ordinal());
+        writer.writeByte(isTransfer?1:0);
         writer.writeString(info.getCid());
         writer.writeByte(info.getOnline()?1:0);
         writer.writeByte(info.isChanged()?1:0);
@@ -48,9 +49,10 @@ public class PacketCreator {
         return writer.getPacket();
     }
 
-    public static Packet getPresence(ClientInfo info, Map<String, Object> changeData) {
+    public static Packet getPresence(ClientInfo info, Map<String, Object> changeData, boolean isTransfer) {
         ByteWriter writer = new ByteWriter();
         writer.writeShort(Opcode.PRESENCE.ordinal());
+        writer.writeByte(isTransfer?1:0);
         writer.writeString(info.getCid());
         writer.writeByte(info.getOnline()?1:0);
         writer.writeByte(1);//changed
@@ -60,9 +62,10 @@ public class PacketCreator {
         return writer.getPacket();
     }
 
-    public static Packet getPresenceInfo(Collection<ClientInfo> info) {//String cid, int ops, int type,
+    public static Packet getPresenceInfo(Collection<ClientInfo> info, boolean isTransfer) {//String cid, int ops, int type,
         ByteWriter writer = new ByteWriter();
         writer.writeShort(Opcode.PRESENCE_INFO.ordinal());
+        writer.writeByte(isTransfer?1:0);
         for(ClientInfo key : info) {
             writer.writeString(key.getCid());
             writer.writeByte(key.getOnline()?1:0);//只有 online 或者 offline

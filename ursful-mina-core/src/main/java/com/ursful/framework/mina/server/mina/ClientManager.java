@@ -205,16 +205,16 @@ public class ClientManager {
     }
 
     public static void broadcastClients(Packet packet, String key, String value){
-        List<Client> clients = getClients();
+        List<Client> clients = getClients(key, value);
         for(Client client : clients){
-            if(key != null && value != null){
-                Object object = client.getMetaData().get(key);
-                if(value.equals(object)){
-                    client.write(packet);
-                }
-            }else {
-                client.write(packet);
-            }
+            client.write(packet);
+        }
+    }
+
+    public static void broadcastClientsContainValue(Packet packet, String key, String value){
+        List<Client> clients = getClientsContainValue(key, value);
+        for(Client client : clients){
+            client.write(packet);
         }
     }
 }

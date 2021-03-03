@@ -252,7 +252,9 @@ public class UrsServer implements Runnable{
 
 
     public void close(){
-        acceptor.dispose();
+        if(acceptor != null) {
+            acceptor.dispose();
+        }
         TimerManager manager = TimerManager.getInstance();
         manager.remove(gcTask);
 

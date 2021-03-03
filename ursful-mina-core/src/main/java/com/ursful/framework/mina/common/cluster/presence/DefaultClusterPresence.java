@@ -22,7 +22,7 @@ public class DefaultClusterPresence implements IClusterPresence {
     @Override
     public void presence(ClientInfo info) {
         if(!info.isServer()) {
-            Packet packet = PacketCreator.getPresence(info);
+            Packet packet = PacketCreator.getPresence(info, true);
             ClientManager.broadcastClients(packet);//转发，本地所有客户端。
             logger.info("Broadcast client online : " + info.getOnline());
             ClientManager.updateClientInfo(info);
@@ -35,7 +35,7 @@ public class DefaultClusterPresence implements IClusterPresence {
     @Override
     public void metaDataChange(ClientInfo info) {
         if(!info.isServer()) {
-            Packet packet = PacketCreator.getPresence(info);
+            Packet packet = PacketCreator.getPresence(info, true);
             ClientManager.broadcastClients(packet);//转发，本地所有客户端。
             logger.info("Broadcast client online : " + info.getOnline());
             ClientManager.updateClientInfo(info);

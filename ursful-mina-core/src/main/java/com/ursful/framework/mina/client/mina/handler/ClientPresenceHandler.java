@@ -19,11 +19,13 @@ public class ClientPresenceHandler implements ClientPacketHandler {
     }
 
     public void handlePacket(ByteReader reader, PacketWriter writer) {
+        boolean isTransfer = reader.readByte() == 1;
         String cid = reader.readString();
         int online = reader.readByte();// 0 offline, 1 online
         int changed = reader.readByte();// 0 --  1 changed
         Map<String, Object> data = reader.readObject();
         ClientInfo info = new ClientInfo(cid, online == 1, changed == 1,  data);
+        info.setTransfer(isTransfer);
         List<IPresence> presenceInfos = UrsManager.getObjects(IPresence.class);
         for(IPresence presence : presenceInfos){
             if(info.isChanged()) {
