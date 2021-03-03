@@ -63,6 +63,10 @@ public class MessageManager{
         session = null;
     }
 
+    public static void setUrsClient(UrsClient client){
+        MessageManager.getManager().setClient(client);
+    }
+
     public UrsClient getClient(){
         return client;
     }

@@ -23,7 +23,12 @@ public class DefaultInfoHandle implements IInfoHandle{
     public boolean preHandle(Client client, ClientInfo clientInfo) {
         Object force = clientInfo.getData().get("force");
         if(force == null || !"true".equalsIgnoreCase(force.toString())) {
-            Collection<Client> clients = ClientManager.getClients();
+            List<Client> clients = null;
+            if(client.isServer()){
+                clients = ClientManager.getServerClients();
+            }else{
+                clients = ClientManager.getClients();
+            }
             for (Client c : clients) {
                 if (clientInfo.getCid().equalsIgnoreCase(c.getUser().getCid())) {
                     ByteWriter writer = new ByteWriter();

@@ -23,7 +23,10 @@ public abstract class AbstractInfoHandler implements PacketHandler {
         String clientId = reader.readString();
         int isServer = reader.readByte();
         Map<String, Object> metaData = reader.readObject();
-        handleInfo(c, new ClientInfo(clientId, isServer == 1, metaData));
+        c.setServer(isServer == 1);
+        ClientInfo clientInfo = new ClientInfo(clientId, true, metaData);
+        clientInfo.setServer(isServer == 1);
+        handleInfo(c, clientInfo);
     }
 
     public abstract void  handleInfo(Client client, ClientInfo info);

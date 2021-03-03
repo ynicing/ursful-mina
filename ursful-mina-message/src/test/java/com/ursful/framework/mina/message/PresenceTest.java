@@ -3,6 +3,7 @@ package com.ursful.framework.mina.message;
 import com.ursful.framework.mina.client.UrsClient;
 import com.ursful.framework.mina.common.UrsManager;
 import com.ursful.framework.mina.common.support.IClientStatus;
+import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.message.client.ClientMessagesHandler;
 import com.ursful.framework.mina.message.client.IMessage;
 import com.ursful.framework.mina.message.cluster.ClusterClientMessagesHandler;
@@ -23,64 +24,53 @@ import java.util.Map;
  * 版权：ursful.com Copyright(c) 2017
  * 说明：[类说明必填内容，请修改]
  */
-public class ServerClientTest {
+public class PresenceTest {
 
     UrsServer server = null;
 
     boolean running = true;
 
-    int count = 0;
+    String result = "";
 
     @Before
     public void before(){
-        server = new UrsServer("server1", 19090);
+        server = new UrsServer("PresenceTest", 19090);
         server.enableCluster();
-        server.setClusterIps("127.0.0.1:19091");
         server.register(new MessagesHandler());
         server.register(new ClusterClientMessagesHandler());
         new Thread(server).start();
     }
 
+    private UrsClient client;
+
     @Test
     public void test() throws InterruptedException {
-        MessageManager.registerMessage(new IMessage() {
-            @Override
-            public void message(Message message, MessageSession session) {
-                Map<String, Object> result = message.getData();
-                Message reply = message.reply();
-                reply.put("hi", "hello" + "," + result.get("who"));
-                reply.putAll(result);
-                session.sendMessage(reply);
-                count++;
-            }
-        });
 
         UrsManager.register(new IClientStatus() {
             @Override
             public void clientReady(UrsClient client, String cid) {
-                MessageManager.getManager().setClient(client);
-                Message message = new Message();
-                message.setType(Message.CHAT);
-                message.setFromCid(client.getCid());
-                message.setToCid(client.getCid());
-                message.put("who", "me");
-                Message reply = MessageManager.getManager().getReply(message, 1000);
-
-                Assert.assertEquals("hello,me", reply.get("hi"));
-
-                running = false;
-
-                count++;
-
+                result += "open";
+                ThreadUtils.start(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.close();
+                    }
+                });
             }
 
             @Override
             public void clientClose(UrsClient client, String cid) {
-
+                result += "close";
+                running = false;
             }
         });
 
-        UrsClient client = new UrsClient("client", "127.0.0.1", 19090);
+        client = new UrsClient("client", "127.0.0.1", 19090);
         client.getMetaData().put("force", "true");
         client.register(new ClientMessagesHandler());
         new Thread(client).run();
@@ -91,11 +81,9 @@ public class ServerClientTest {
             Thread.sleep(1000);
         }
 
-        client.close();
-
         server.close();
 
-        Assert.assertEquals(2, count);
+        Assert.assertEquals("openclose", result);
 
     }
 }

@@ -11,6 +11,6 @@ import com.ursful.framework.mina.server.client.Client;
  * 说明：[类说明必填内容，请修改]
  */
 public interface IServerClientStatus  extends IOrder {
-    void serverClientConnect(Client client);
-    void serverClientClose(Client client);
+    void serverClientConnect(String server, Client client);
+    void serverClientClose(String server, Client client);
 }

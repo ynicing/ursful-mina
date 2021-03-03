@@ -2,6 +2,7 @@ package com.ursful.framework.mina.server.mina.handler;
 
 import com.ursful.framework.mina.common.UrsManager;
 import com.ursful.framework.mina.common.support.ClientInfo;
+import com.ursful.framework.mina.common.support.User;
 import com.ursful.framework.mina.common.tools.*;
 import com.ursful.framework.mina.server.client.Client;
 import com.ursful.framework.mina.server.client.ClientUser;
@@ -32,12 +33,13 @@ public class InfoHandler extends AbstractInfoHandler {
         client.getSession().setAttribute(Client.CLIENT_ID_KEY, user.getCid());
 
         if(client.isServer()){
+            final String domain = User.getDomain(info.getCid());
             ThreadUtils.start(new Runnable() {
                 @Override
                 public void run() {
                     List<IServerClientStatus> statuses = UrsManager.getObjects(IServerClientStatus.class);
                     for (IServerClientStatus status : statuses) {
-                        status.serverClientConnect(client);
+                        status.serverClientConnect(domain, client);
                     }
                 }
             });

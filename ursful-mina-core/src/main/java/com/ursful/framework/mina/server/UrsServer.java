@@ -10,11 +10,13 @@ import com.ursful.framework.mina.common.cluster.presence.IClusterPresenceInfo;
 import com.ursful.framework.mina.common.support.IPAddress;
 import com.ursful.framework.mina.common.tools.DateUtils;
 import com.ursful.framework.mina.common.cluster.listener.IClusterClientStatus;
+import com.ursful.framework.mina.common.tools.NetworkUtils;
 import com.ursful.framework.mina.server.client.Client;
 import com.ursful.framework.mina.server.client.listener.DefaultClientCloseListener;
 import com.ursful.framework.mina.server.client.listener.DefaultClientInfoListener;
 import com.ursful.framework.mina.server.client.listener.IClientCloseListener;
 import com.ursful.framework.mina.server.client.listener.IClientInfoListener;
+import com.ursful.framework.mina.server.listener.IServerListener;
 import com.ursful.framework.mina.server.mina.ServerHandler;
 import com.ursful.framework.mina.server.mina.coder.CodecFactory;
 import com.ursful.framework.mina.server.mina.handle.DefaultInfoHandle;
@@ -32,10 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UrsServer implements Runnable{
 
@@ -146,39 +145,44 @@ public class UrsServer implements Runnable{
     public void run() {
 
         if(enableTransfer) {
+            final String serverId = this.sid;
             UrsManager.register(new IServerClientStatus() {
                 @Override
-                public void serverClientConnect(Client client) {
-                    if(client.getMetaData().containsKey("server_port")) {//自定义不含server port
-                        String host = (String)client.getMetaData().get("server_host");
-                        if(host == null){
-                            host = "127.0.0.1";
-                        }
-                        int port = (int) client.getMetaData().get("server_port");
-                        String key = host + ":" + port;
-                        if(!ursClientMap.containsKey(key)) {
-                            createClient(host, port);
+                public void serverClientConnect(String server, Client client) {
+                    if(serverId.equals(server)) {
+                        if (client.getMetaData().containsKey("server_port")) {//自定义不含server port
+                            String host = (String) client.getMetaData().get("server_host");
+                            if (host == null) {
+                                host = "127.0.0.1";
+                            }
+                            int port = (int) client.getMetaData().get("server_port");
+                            String key = host + ":" + port;
+                            if (!ursClientMap.containsKey(key)) {
+                                createClient(host, port);
+                            }
                         }
                     }
                 }
 
                 @Override
-                public void serverClientClose(Client client) {
-                    String host = (String)client.getMetaData().get("server_host");
-                    if(host == null){
-                        host = "127.0.0.1";
-                    }
-                    int port = (int) client.getMetaData().get("server_port");
-                    String key = host + ":" + port;
-                    UrsClient c = ursClientMap.get(key);
-                    if (c != null) {
-                        logger.info(key + "-----------serverClientClose..remove......." + key);
-                        try {
-                            c.close();
-                        }catch (Exception e){
-                            e.printStackTrace();
+                public void serverClientClose(String server, Client client) {
+                    if(serverId.equals(server)) {
+                        String host = (String) client.getMetaData().get("server_host");
+                        if (host == null) {
+                            host = "127.0.0.1";
                         }
-                        ursClientMap.remove(key);
+                        int port = (int) client.getMetaData().get("server_port");
+                        String key = host + ":" + port;
+                        UrsClient c = ursClientMap.get(key);
+                        if (c != null) {
+                            logger.info(key + "-----------serverClientClose..remove......." + key);
+                            try {
+                                c.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            ursClientMap.remove(key);
+                        }
                     }
                 }
             });
@@ -228,7 +232,10 @@ public class UrsServer implements Runnable{
             acceptor.setHandler(serverHandler);
             acceptor.bind(new InetSocketAddress(port));
             logger.info("端口 :" + port);
-
+            List<IServerListener> serverListeners = UrsManager.getObjects(IServerListener.class);
+            for (IServerListener serverListener : serverListeners){
+                serverListener.serverStarted(this.sid, NetworkUtils.getHostAddress(), port);
+            }
             if(enableTransfer){
                 //List<String> ip = NetworkUtils.getHostAddress();
                 for(IPAddress address : ipPortList){
@@ -249,6 +256,15 @@ public class UrsServer implements Runnable{
         TimerManager manager = TimerManager.getInstance();
         manager.remove(gcTask);
 
+        Set<UrsClient> clients = new HashSet<UrsClient>(ursClientMap.values());
+        for (UrsClient client : clients){
+            try {
+                client.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        ursClientMap.clear();
     }
 
     private void createClient(String host, int port){

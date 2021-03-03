@@ -86,6 +86,7 @@ public class ServerHandler extends IoHandlerAdapter {
     @Override
     public void sessionClosed(IoSession session) throws Exception {
         synchronized (session) {
+            final String serverSid = this.sid;
             Client client = (Client) session.getAttribute(Client.CLIENT_KEY);
             if (client != null) {
                 if(client.isServer()){
@@ -94,7 +95,7 @@ public class ServerHandler extends IoHandlerAdapter {
                         public void run() {
                             List<IServerClientStatus> statuses = UrsManager.getObjects(IServerClientStatus.class);
                             for (IServerClientStatus status : statuses) {
-                                status.serverClientClose(client);
+                                status.serverClientClose(serverSid, client);
                             }
                         }
                     });
