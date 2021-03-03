@@ -2,9 +2,10 @@ package com.ursful.framework.mina.test.clientSendSelf;
 
 
 import com.ursful.framework.mina.client.UrsClient;
-import com.ursful.framework.mina.client.message.IPresence;
-import com.ursful.framework.mina.client.message.IPresenceInfo;
+import com.ursful.framework.mina.client.presence.IPresence;
+import com.ursful.framework.mina.client.presence.IPresenceInfo;
 import com.ursful.framework.mina.common.UrsManager;
+import com.ursful.framework.mina.common.support.ClientInfo;
 import com.ursful.framework.mina.common.support.IClientStatus;
 import com.ursful.framework.mina.message.MessageManager;
 import com.ursful.framework.mina.message.client.ClientMessagesHandler;
@@ -12,6 +13,7 @@ import com.ursful.framework.mina.message.client.IMessage;
 import com.ursful.framework.mina.message.support.Message;
 import com.ursful.framework.mina.message.support.MessageSession;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,27 +35,27 @@ public class ClientCopy {
 
         UrsManager.register(new IPresence() {
             @Override
-            public void presence(String cid, boolean online, Map<String, Object> data) {
-                System.out.println("user[" + cid + "]:" + (online ? "Online" : "Offline") + " >>> " + data);
+            public void presence(ClientInfo info) {
+                System.out.println("user[" + info.getCid() + "]:" + (info.getOnline() ? "Online" : "Offline") + " >>> " + info.getData());
             }
         });
 
         UrsManager.register(new IPresenceInfo() {
             @Override
-            public void presences(Map<String, Map<String, Object>> cids) {
-                System.out.println(cids);
+            public void presences(List<ClientInfo> cids) {
+                System.out.println("presence info : " + cids);
             }
         });
 
         UrsManager.register(new IClientStatus() {
 
             @Override
-            public void clientReady(String cid) {
+            public void clientReady(UrsClient client, String cid) {
                 System.out.println("clientReady:" + cid);
             }
 
             @Override
-            public void clientClose(String cid) {
+            public void clientClose(UrsClient client, String cid) {
                 System.out.println("clientClose:" + cid);
             }
         });

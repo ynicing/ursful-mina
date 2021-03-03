@@ -3,11 +3,9 @@ package com.ursful.framework.mina.server.mina;
 import com.ursful.framework.mina.common.UrsManager;
 import com.ursful.framework.mina.common.packet.Packet;
 import com.ursful.framework.mina.common.tools.AesOfb;
-import com.ursful.framework.mina.common.tools.BitTools;
 import com.ursful.framework.mina.common.tools.ByteReader;
 import com.ursful.framework.mina.common.tools.ThreadUtils;
-import com.ursful.framework.mina.server.client.IClientManager;
-import com.ursful.framework.mina.server.mina.coder.PacketDecoder;
+import com.ursful.framework.mina.server.client.listener.IClientCloseListener;
 import com.ursful.framework.mina.server.mina.support.IServerClientStatus;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
@@ -90,10 +88,6 @@ public class ServerHandler extends IoHandlerAdapter {
         synchronized (session) {
             Client client = (Client) session.getAttribute(Client.CLIENT_KEY);
             if (client != null) {
-                List<IClientManager> list = UrsManager.getObjects(IClientManager.class);
-                for(IClientManager manager : list){
-                    manager.deregister(client);
-                }
                 if(client.isServer()){
                     ThreadUtils.start(new Runnable() {
                         @Override
@@ -104,6 +98,10 @@ public class ServerHandler extends IoHandlerAdapter {
                             }
                         }
                     });
+                }
+                List<IClientCloseListener> list = UrsManager.getObjects(IClientCloseListener.class);
+                for(IClientCloseListener listener : list){
+                    listener.close(client);
                 }
                 client.disconnect();
                 session.removeAttribute(Client.CLIENT_KEY);

@@ -36,11 +36,13 @@ public class Client {
     private int lastActionId = 0;
     public int packetnum = 0;
 
+    private boolean server = false;
+
+    public void setServer(boolean server){
+        this.server = server;
+    }
     public boolean isServer() {
-        if (getMetaData() == null){
-            return false;
-        }
-        return "SERVER_CLIENT".equalsIgnoreCase((String)getMetaData().get("client_type"));
+        return this.server;
     }
 
     private Map<String, Object> metaData;

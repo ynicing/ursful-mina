@@ -1,18 +1,16 @@
 package com.ursful.framework.mina.client.mina;
 
 import com.ursful.framework.mina.client.UrsClient;
-import com.ursful.framework.mina.client.exception.RefuseException;
-import com.ursful.framework.mina.client.message.IPresence;
 import com.ursful.framework.mina.client.mina.packet.ClientPacketHandler;
 import com.ursful.framework.mina.client.mina.packet.PacketWriter;
+import com.ursful.framework.mina.client.presence.IPresence;
 import com.ursful.framework.mina.client.tools.ClientPacketCreator;
 import com.ursful.framework.mina.client.tools.Cryptor;
 import com.ursful.framework.mina.common.UrsManager;
 import com.ursful.framework.mina.common.Opcode;
 import com.ursful.framework.mina.common.packet.Packet;
-import com.ursful.framework.mina.common.support.IClientStatus;
+import com.ursful.framework.mina.common.support.ClientInfo;
 import com.ursful.framework.mina.common.tools.ByteReader;
-import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.server.client.Client;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
@@ -120,10 +118,8 @@ public class ClientHandler extends IoHandlerAdapter{
 			if (packetHandler != null) {
 				try {
 					packetHandler.handlePacket(reader, writer);
-				}catch (RefuseException e){
-					client.close();
-				} catch (Throwable t) {
-					t.printStackTrace();
+				}catch (Exception e){
+					e.printStackTrace();
 				}
 			}else{
 				logger.warn("unhanlder message : " + packetId + ">" + reader);
@@ -145,15 +141,12 @@ public class ClientHandler extends IoHandlerAdapter{
 		if(clientServerId == null){
 			return;
 		}
-
-		Map<String, Object> data = client.getMetaData();
-		data.put("online", false);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				List<IPresence> presenceInfos = UrsManager.getObjects(IPresence.class);
 				for(IPresence presence : presenceInfos){
-					presence.presence(clientServerId, false, client.getMetaData());
+					presence.presence(new ClientInfo(clientServerId, false, client.getMetaData()));
 				}
 			}
 		}).start();

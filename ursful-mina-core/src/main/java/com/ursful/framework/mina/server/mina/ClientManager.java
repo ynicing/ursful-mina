@@ -1,10 +1,10 @@
 package com.ursful.framework.mina.server.mina;
 
 import com.ursful.framework.mina.common.packet.Packet;
+import com.ursful.framework.mina.common.support.ClientInfo;
 import com.ursful.framework.mina.common.support.User;
 import com.ursful.framework.mina.server.client.Client;
 import com.ursful.framework.mina.server.client.ClientUser;
-import com.ursful.framework.mina.server.tools.PacketCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,15 +56,16 @@ public class ClientManager {
         serverClientInfo.remove(domain);
     }
 
-    public static void updateClientInfo(String domain, String cid, boolean online, Map<String, Object> data){
+    public static void updateClientInfo(ClientInfo info){
+        String domain = User.getDomain(info.getCid());
         Map<String, ClientInfo> map = serverClientInfo.get(domain);
         if(map == null){
             map = new HashMap<String, ClientInfo>();
         }
-        if(online) {
-            map.put(cid, new ClientInfo(cid, online, data));
+        if(info.getOnline()) {
+            map.put(info.getCid(), info);
         }else{
-            map.remove(cid);
+            map.remove(info.getCid());
         }
         serverClientInfo.put(domain, map);
         System.out.println("now clients:" +  map);
@@ -156,22 +157,52 @@ public class ClientManager {
         return new ArrayList<Client>(localClients.values());
     }
 
+    public static List<Client> getClients(String key, String value){
+        List<Client> clients = new ArrayList<Client>(localClients.values());
+        List<Client> result = new ArrayList<Client>();
+        if(key != null && value != null){
+            for (Client client : clients){
+                Object object = client.getMetaData().get(key);
+                if (value.equals(object)){
+                    result.add(client);
+                }
+            }
+        }else{
+            result.addAll(clients);
+        }
+        return result;
+    }
+
     public static List<Client> getServerClients(){
         return new ArrayList<Client>(localServerClients.values());
     }
 
 
     public static void broadcastServerClients(Packet packet){
-        Collection<Client> clients = getServerClients();
+        List<Client> clients = getServerClients();
         for(Client client : clients){
             client.write(packet);
         }
     }
 
     public static void broadcastClients(Packet packet){
-        Collection<Client> clients = getClients();
+        List<Client> clients = getClients();
         for(Client client : clients){
             client.write(packet);
+        }
+    }
+
+    public static void broadcastClients(Packet packet, String key, String value){
+        List<Client> clients = getClients();
+        for(Client client : clients){
+            if(key != null && value != null){
+                Object object = client.getMetaData().get(key);
+                if(value.equals(object)){
+                    client.write(packet);
+                }
+            }else {
+                client.write(packet);
+            }
         }
     }
 }

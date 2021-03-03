@@ -71,13 +71,18 @@ public class UrsManager {
     }
 
     public static void deregister(Object object){
+        if(object == null){
+            return;
+        }
         Class [] classes = object.getClass().getInterfaces();
-        for(Class clazz : classes){
-            List<Object> objects = interfaces.get(clazz);
-            if(objects != null){
-                if(objects.contains(object)){
-                    objects.remove(object);
-                    interfaces.put(clazz, objects);
+        if(classes != null) {
+            for (Class clazz : classes) {
+                List<Object> objects = interfaces.get(clazz);
+                if (objects != null) {
+                    if (objects.contains(object)) {
+                        objects.remove(object);
+                        interfaces.put(clazz, objects);
+                    }
                 }
             }
         }

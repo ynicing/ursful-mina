@@ -12,5 +12,5 @@ import com.ursful.framework.mina.server.client.Client;
  * 说明：[类说明必填内容，请修改]
  */
 public interface IServerMessage  extends IOrder {
-    void received(Message message, Client client);
+    boolean received(Message message, Client client);
 }

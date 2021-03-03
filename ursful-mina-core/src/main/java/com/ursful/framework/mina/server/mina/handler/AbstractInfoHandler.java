@@ -1,18 +1,11 @@
 package com.ursful.framework.mina.server.mina.handler;
 
 import com.ursful.framework.mina.common.Opcode;
-import com.ursful.framework.mina.common.UrsManager;
-import com.ursful.framework.mina.common.cluster.listener.IClusterClientStatus;
-import com.ursful.framework.mina.common.support.User;
+import com.ursful.framework.mina.common.support.ClientInfo;
 import com.ursful.framework.mina.common.tools.*;
 import com.ursful.framework.mina.server.client.Client;
-import com.ursful.framework.mina.server.client.ClientUser;
-import com.ursful.framework.mina.server.client.IClientManager;
-import com.ursful.framework.mina.server.mina.ClientManager;
 import com.ursful.framework.mina.server.mina.packet.PacketHandler;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,10 +23,10 @@ public abstract class AbstractInfoHandler implements PacketHandler {
         String clientId = reader.readString();
         int isServer = reader.readByte();
         Map<String, Object> metaData = reader.readObject();
-        handleInfo(clientId, isServer == 1, metaData, c);
+        handleInfo(c, new ClientInfo(clientId, isServer == 1, metaData));
     }
 
-    public abstract void  handleInfo(String cid, boolean isServer, Map<String, Object> data, Client client);
+    public abstract void  handleInfo(Client client, ClientInfo info);
 
     @Override
     public boolean validateState(Client c) {

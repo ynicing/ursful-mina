@@ -16,12 +16,9 @@ public interface IClientStatus  extends IOrder{
     default void clientClose(UrsClient client, String cid){
 
     }
-    @Deprecated
-    default void clientReady(String cid){
+
+    default void clientError(UrsClient client, int errorCode, String message){
 
     }
-    @Deprecated
-    default void clientClose(String cid){
 
-    }
 }

@@ -15,7 +15,6 @@ public class KeepAliveHandler implements PacketHandler {
 
     @Override
     public void handlePacket(ByteReader reader, Client c) {
-//        System.out.println("keep : " + reader.readLong() + " > "  +reader.available());
         long time = reader.readLong();
         c.pongReceived(time);
     }

@@ -4,15 +4,13 @@ import com.ursful.framework.mina.common.Opcode;
 import com.ursful.framework.mina.common.UrsManager;
 import com.ursful.framework.mina.common.packet.ByteArrayPacket;
 import com.ursful.framework.mina.common.packet.Packet;
+import com.ursful.framework.mina.common.support.ClientInfo;
 import com.ursful.framework.mina.common.support.User;
 import com.ursful.framework.mina.common.tools.ByteReader;
 import com.ursful.framework.mina.common.tools.ByteWriter;
 import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.message.support.Message;
-import com.ursful.framework.mina.message.support.MessageCreator;
 import com.ursful.framework.mina.server.client.Client;
-import com.ursful.framework.mina.server.client.ClientUser;
-import com.ursful.framework.mina.server.mina.ClientInfo;
 import com.ursful.framework.mina.server.mina.ClientManager;
 import com.ursful.framework.mina.server.mina.packet.PacketHandler;
 import com.ursful.framework.mina.server.mina.support.IServerClientStatus;
@@ -50,15 +48,10 @@ public class MessagesHandler implements PacketHandler {
 //        }
         List<IServerMessage> serverMessages = UrsManager.getObjects(IServerMessage.class);
         for (IServerMessage serverMessage : serverMessages){
-            ThreadUtils.start(new Runnable() {
-                @Override
-                public void run() {
-                    List<IServerClientStatus> statuses = UrsManager.getObjects(IServerClientStatus.class);
-                    for (IServerClientStatus status : statuses) {
-                        serverMessage.received(message, c);
-                    }
-                }
-            });
+            if(serverMessage.received(message, c)){
+                //done
+                return;
+            }
         }
         if(message.getId().startsWith("reply-")){
             logger.info("Reply:" + message.getId());
@@ -84,55 +77,16 @@ public class MessagesHandler implements PacketHandler {
         }
 
         if(Message.BROADCAST.equalsIgnoreCase(message.getType())) {//全部接收者
+            //根据关键字广播
             sendLocalServer(reader.getBytes());//本地服务
             //转发到其他服务。
             Collection<Client> clients = ClientManager.getServerClients();
             logger.debug("sent to server-client clients:" + clients);
             for (Client client : clients) {
-                //message.setToCid("all@" + client.getUser().getId());
                 Packet packet = PacketCreator.getMessageTransfer(
                         message.getType(), message.getFromCid(), message.getToCid(), reader.getBytes());
                 client.write(packet);
             }
-            /*
-            if(toCid.endsWith("@" + c.getUser().getDomain())){//本服务接收者
-                logger.info("sent to local clients:" + c.getUser().getDomain());
-                sendLocalServer(reader.getBytes());
-            }else{
-                String domain = toCid.substring("all@".length());
-                if("all".equals(domain)){//其他所有服务，包括本地服务。
-                    logger.info("sent to local clients2:" + c.getUser().getDomain());
-                    sendLocalServer(reader.getBytes());//本地服务
-                    //转发到其他服务。
-                    Message message = new Message();
-                    message.setId(id);
-                    message.setFromCid(fromCid);
-                    message.setToCid(toCid);
-                    message.setType(type);
-                    message.setData(data);
-                    Collection<Client> clients = ClientManager.getAllClients();
-                    logger.info("sent to server-client clients:" + clients);
-                    for(Client client : clients){
-                        if(client.isServer()) {
-                            //message.setToCid("all@" + client.getUser().getId());
-                            Packet msg  = MessageCreator.createMessage(message);
-                            Packet packet = PacketCreator.getMessageTransfer(fromCid, message.getToCid(), msg.getBytes());
-                            client.write(packet);
-                        }
-                    }
-                }else{
-
-                    //指定服务。
-                    Client routeClient = ClientManager.getClient(domain + "@" + c.getUser().getDomain());
-                    if(routeClient != null){
-                        logger.info("sent to server-client client:" + domain + "@" + c.getUser().getDomain());
-                        Packet packet = PacketCreator.getMessageTransfer(fromCid, "all@" + domain, reader.getBytes());
-                        routeClient.write(packet);
-                    }else{
-                        logger.warn("Unknown server:" + toCid);
-                    }
-                }
-            }*/
         }else if(Message.CLIENTS.equals(message.getType())){
             List<ClientInfo> clientInfoList = ClientManager.getAllClientsInfo();
             Message reply = message.reply();

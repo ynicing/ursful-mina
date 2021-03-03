@@ -2,29 +2,14 @@ package com.ursful.framework.mina.server.tools;
 
 
 import com.ursful.framework.mina.common.Opcode;
-import com.ursful.framework.mina.common.UrsManager;
 import com.ursful.framework.mina.common.packet.Packet;
+import com.ursful.framework.mina.common.support.ClientInfo;
 import com.ursful.framework.mina.common.tools.ByteWriter;
-import com.ursful.framework.mina.server.client.Client;
-import com.ursful.framework.mina.server.mina.ClientInfo;
-import com.ursful.framework.mina.server.mina.support.IPresenceData;
-import com.ursful.framework.mina.server.mina.support.IPresenceInfoData;
 
 import java.util.*;
 
 public class PacketCreator {
 
-
-    private static IPresenceData presenceData = null;
-    private static IPresenceInfoData presenceInfoData = null;
-
-    public static void registerPresenceData(IPresenceData data){
-        presenceData = data;
-    }
-
-    public static void registerPresenceInfoData(IPresenceInfoData data){
-        presenceInfoData = data;
-    }
 
     public static Packet getHello(short version, String sid) {
         return getHello(version, sid, null, null);
@@ -54,14 +39,11 @@ public class PacketCreator {
     }
 
     public static Packet getPresence(ClientInfo info) {//String cid, int ops, int type,
-        if (presenceData != null){
-            info = presenceData.presence(info);
-        }
         ByteWriter writer = new ByteWriter();
         writer.writeShort(Opcode.PRESENCE.ordinal());
         writer.writeString(info.getCid());
         writer.writeByte(info.getOnline()?1:0);
-        info.getData().put("online", info.getOnline());
+        writer.writeByte(info.isChanged()?1:0);
         writer.writeObject(info.getData());
         return writer.getPacket();
     }
@@ -70,31 +52,20 @@ public class PacketCreator {
         ByteWriter writer = new ByteWriter();
         writer.writeShort(Opcode.PRESENCE.ordinal());
         writer.writeString(info.getCid());
-        writer.writeByte(2);
-        writer.writeObject(changeData);
+        writer.writeByte(info.getOnline()?1:0);
+        writer.writeByte(1);//changed
+        Map<String, Object> data = new HashMap<String, Object>(info.getData());
+        data.putAll(changeData);
+        writer.writeObject(data);
         return writer.getPacket();
     }
 
-//    public static Packet getServerInfo(Collection<ClientInfo> info) {//String cid, int ops, int type,
-//        ByteWriter writer = new ByteWriter();
-//        writer.writeShort(Opcode.SERVER_INFO.ordinal());
-//        for(ClientInfo key : info) {
-//            writer.writeString(key.getCid());
-//            key.getData().put("online", true);
-//            writer.writeObject(key.getData());
-//        }
-//        return writer.getPacket();
-//    }
-
     public static Packet getPresenceInfo(Collection<ClientInfo> info) {//String cid, int ops, int type,
-        if (presenceInfoData != null){
-            info = presenceInfoData.presenceInfo(info);
-        }
         ByteWriter writer = new ByteWriter();
         writer.writeShort(Opcode.PRESENCE_INFO.ordinal());
         for(ClientInfo key : info) {
             writer.writeString(key.getCid());
-            key.getData().put("online", key.getOnline());
+            writer.writeByte(key.getOnline()?1:0);//只有 online 或者 offline
             writer.writeObject(key.getData());
         }
         return writer.getPacket();

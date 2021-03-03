@@ -3,17 +3,22 @@ package com.ursful.framework.mina.server;
 import com.ursful.framework.mina.client.UrsClient;
 import com.ursful.framework.mina.client.mina.packet.ClientPacketHandler;
 import com.ursful.framework.mina.common.UrsManager;
+import com.ursful.framework.mina.common.cluster.presence.DefaultClusterPresence;
+import com.ursful.framework.mina.common.cluster.presence.DefaultClusterPresenceInfo;
+import com.ursful.framework.mina.common.cluster.presence.IClusterPresence;
+import com.ursful.framework.mina.common.cluster.presence.IClusterPresenceInfo;
 import com.ursful.framework.mina.common.support.IPAddress;
 import com.ursful.framework.mina.common.tools.DateUtils;
-import com.ursful.framework.mina.common.tools.NetworkUtils;
 import com.ursful.framework.mina.common.cluster.listener.IClusterClientStatus;
-import com.ursful.framework.mina.common.tools.StringUtils;
-import com.ursful.framework.mina.common.tools.ThreadUtils;
 import com.ursful.framework.mina.server.client.Client;
-import com.ursful.framework.mina.server.client.IClientManager;
-import com.ursful.framework.mina.server.mina.DefaultClientManager;
+import com.ursful.framework.mina.server.client.listener.DefaultClientCloseListener;
+import com.ursful.framework.mina.server.client.listener.DefaultClientInfoListener;
+import com.ursful.framework.mina.server.client.listener.IClientCloseListener;
+import com.ursful.framework.mina.server.client.listener.IClientInfoListener;
 import com.ursful.framework.mina.server.mina.ServerHandler;
 import com.ursful.framework.mina.server.mina.coder.CodecFactory;
+import com.ursful.framework.mina.server.mina.handle.DefaultInfoHandle;
+import com.ursful.framework.mina.server.mina.handle.IInfoHandle;
 import com.ursful.framework.mina.server.mina.packet.PacketHandler;
 import com.ursful.framework.mina.server.mina.packet.PacketProcessor;
 import com.ursful.framework.mina.server.mina.support.IServerClientStatus;
@@ -54,8 +59,21 @@ public class UrsServer implements Runnable{
         }
     }
 
+    private IClusterPresence clusterPresence = new DefaultClusterPresence();
+    private IClusterPresenceInfo clusterPresenceInfo = new DefaultClusterPresenceInfo();
+
+    public void removeClusterPresence() {
+        UrsManager.deregister(clusterPresence);
+    }
+
+    public void removeClusterPresenceInfo() {
+        UrsManager.deregister(clusterPresenceInfo);
+    }
+
     public void enableCluster(){
         this.enableTransfer = true;
+        UrsManager.register(clusterPresenceInfo);
+        UrsManager.register(clusterPresence);
     }
 
     private int port;
@@ -64,18 +82,31 @@ public class UrsServer implements Runnable{
     private ServerHandler serverHandler;
     private PacketProcessor processor;
 
+    private IClientCloseListener clientCloseListener = new DefaultClientCloseListener();
+    private IClientInfoListener clientInfoListener = new DefaultClientInfoListener();
+
+    private IInfoHandle infoHandle = new DefaultInfoHandle();
+
+    public void removeDefaultInfoHandle(){
+        UrsManager.deregister(infoHandle);
+    }
+
     public int getPort() {
         return port;
     }
 
     private UrsServer(){}
 
-    private IClientManager clientManager = new DefaultClientManager();
+    public void registerClientCloseListener(IClientCloseListener listener){
+        UrsManager.deregister(clientCloseListener);
+        clientCloseListener = listener;
+        UrsManager.register(clientCloseListener);
+    }
 
-    public void setClientManager(IClientManager manager){
-        UrsManager.deregister(manager);
-        clientManager = manager;
-        UrsManager.register(clientManager);
+    public void registerClientInfoListener(IClientInfoListener listener){
+        UrsManager.deregister(clientInfoListener);
+        clientInfoListener = listener;
+        UrsManager.register(clientInfoListener);
     }
 
     public UrsServer(String sid, int port) {
@@ -83,7 +114,9 @@ public class UrsServer implements Runnable{
         this.sid = sid;
         this.processor = PacketProcessor.getProcessor();
         this.serverHandler = new ServerHandler(this.sid, this.processor);
-        UrsManager.register(clientManager);
+        registerClientCloseListener(clientCloseListener);
+        registerClientInfoListener(clientInfoListener);
+        UrsManager.register(infoHandle);
     }
 
     public void register(PacketHandler handler){
@@ -183,6 +216,7 @@ public class UrsServer implements Runnable{
                     //当server1 断开 server2时，将对应的用户信息全部标记为离线
                 }
             });
+
         }
 
         IoBuffer.setUseDirectBuffer(false);

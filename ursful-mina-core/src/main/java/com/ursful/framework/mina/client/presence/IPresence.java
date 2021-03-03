@@ -1,8 +1,7 @@
-package com.ursful.framework.mina.client.message;
+package com.ursful.framework.mina.client.presence;
 
+import com.ursful.framework.mina.common.support.ClientInfo;
 import com.ursful.framework.mina.common.support.IOrder;
-
-import java.util.Map;
 
 /**
  * 类名：IPresence
@@ -12,7 +11,7 @@ import java.util.Map;
  * 说明：[类说明必填内容，请修改]
  */
 public interface IPresence extends IOrder{
-    void presence(String cid, boolean online, Map<String, Object> data);
+    void presence(ClientInfo info);
 
-    default void presenceChange(String cid, Map<String, Object> data){}
+    default void metaDataChange(ClientInfo info){}
 }

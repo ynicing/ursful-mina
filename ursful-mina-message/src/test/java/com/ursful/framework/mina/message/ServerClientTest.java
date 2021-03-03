@@ -33,19 +33,16 @@ public class ServerClientTest {
 
     @Before
     public void before(){
-        System.out.println(Thread.currentThread().getName());
         server = new UrsServer("server1", 19090);
         server.enableCluster();
         server.setClusterIps("127.0.0.1:19091");
         server.register(new MessagesHandler());
         server.register(new ClusterClientMessagesHandler());
         new Thread(server).start();
-        System.out.println("start...");
     }
 
     @Test
     public void test() throws InterruptedException {
-        System.out.println("go..");
         MessageManager.registerMessage(new IMessage() {
             @Override
             public void message(Message message, MessageSession session) {

@@ -190,7 +190,7 @@ public class UrsClient implements Runnable{
 
 
             clientHandler.register(new ClientKeepAliveHandler());
-            clientHandler.register(new ClientInfoHandler());
+            clientHandler.register(new ClientInfoHandler(this));
 
 
 
@@ -271,7 +271,6 @@ public class UrsClient implements Runnable{
                     List<IClientStatus> statuses = UrsManager.getObjects(IClientStatus.class);
                     for (IClientStatus status : statuses) {
                         status.clientReady(thisClient, getCid());
-                        status.clientReady(getCid());
                     }
                 }
             });
