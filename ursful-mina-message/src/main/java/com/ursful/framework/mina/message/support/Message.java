@@ -202,6 +202,17 @@ public class Message implements Serializable{
         return message;
     }
 
+    public Message transfer(String from, String to){
+        Message message = new Message();
+        message.setFromCid(from);
+        message.setToCid(to);
+        message.setType(this.type);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.putAll(this.data);
+        message.setData(map);
+        return message;
+    }
+
     public void putAll(Map<String, Object> value){
         if (this.data == null){
             this.data = new HashMap<String, Object>();

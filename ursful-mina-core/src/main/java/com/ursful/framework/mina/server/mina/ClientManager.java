@@ -158,7 +158,7 @@ public class ClientManager {
     }
 
     public static List<Client> getClients(String key, String value){
-        List<Client> clients = new ArrayList<Client>(localClients.values());
+        List<Client> clients = getClients();
         List<Client> result = new ArrayList<Client>();
         if(key != null && value != null){
             for (Client client : clients){
@@ -167,8 +167,20 @@ public class ClientManager {
                     result.add(client);
                 }
             }
-        }else{
-            result.addAll(clients);
+        }
+        return result;
+    }
+
+    public static List<Client> getClientsContainValue(String key, String value){
+        List<Client> clients = getClients();
+        List<Client> result = new ArrayList<Client>();
+        if(key != null && value != null){
+            for (Client client : clients){
+                String listen = "," + client.getMetaData().get("listen") + ",";
+                if (listen.contains(",system,")) {
+                    result.add(client);
+                }
+            }
         }
         return result;
     }
