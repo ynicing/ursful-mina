@@ -2,10 +2,6 @@ package com.ursful.framework.mina.test;
 
 
 import com.ursful.framework.mina.client.UrsClient;
-import com.ursful.framework.mina.client.presence.IPresence;
-import com.ursful.framework.mina.client.presence.IPresenceInfo;
-import com.ursful.framework.mina.common.UrsManager;
-import com.ursful.framework.mina.common.support.IClientStatus;
 import com.ursful.framework.mina.message.MessageManager;
 import com.ursful.framework.mina.message.client.ClientMessagesHandler;
 import com.ursful.framework.mina.message.client.IMessage;

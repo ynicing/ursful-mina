@@ -34,7 +34,7 @@ public class ClientPresenceInfoHandler implements ClientPacketHandler{
 
         List<IPresenceInfo> presenceInfos = UrsManager.getObjects(IPresenceInfo.class);
         for(IPresenceInfo info : presenceInfos) {
-            info.presences(clientInfos);
+            info.presences(isTransfer, clientInfos);
         }
     }
 

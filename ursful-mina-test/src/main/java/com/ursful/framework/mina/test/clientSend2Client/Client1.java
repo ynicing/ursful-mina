@@ -45,7 +45,7 @@ public class Client1 {
 
         UrsManager.register(new IPresenceInfo() {
             @Override
-            public void presences(List<ClientInfo> cids) {
+            public void presences(boolean isTransfer, List<ClientInfo> cids) {
                 System.out.println("presence info : " + cids);
             }
         });

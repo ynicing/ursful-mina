@@ -13,5 +13,5 @@ import java.util.List;
  * 说明：[类说明必填内容，请修改]
  */
 public interface IPresenceInfo  extends IOrder {
-    void presences(List<ClientInfo> clientInfos);
+    void presences(boolean isTransfer, List<ClientInfo> clientInfos);
 }
