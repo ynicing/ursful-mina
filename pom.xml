@@ -7,7 +7,7 @@
   <groupId>com.ursful.framework</groupId>
   <artifactId>ursful-mina</artifactId>
   <packaging>pom</packaging>
-  <version>3.0</version>
+  <version>3.0.1</version>
 
   <description>MINA, message center.</description>
   <modules>
@@ -51,7 +51,7 @@
     <mysql.version>5.1.38</mysql.version>
     <slf4j.version>1.7.7</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
-    <ursful-mina.version>3.0</ursful-mina.version>
+    <ursful-mina.version>3.0.1</ursful-mina.version>
 
   </properties>
 

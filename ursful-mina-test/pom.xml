@@ -5,13 +5,13 @@
     <parent>
         <artifactId>ursful-mina</artifactId>
         <groupId>com.ursful.framework</groupId>
-        <version>3.0</version>
+        <version>3.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ursful.framework</groupId>
     <artifactId>ursful-mina-test</artifactId>
-    <version>3.0</version>
+    <version>3.0.1</version>
 
     <name>ursful-mina-test</name>
     <url>https://ursful.com</url>

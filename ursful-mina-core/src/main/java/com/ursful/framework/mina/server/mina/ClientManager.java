@@ -177,7 +177,7 @@ public class ClientManager {
         if(key != null && value != null){
             for (Client client : clients){
                 String listen = "," + client.getMetaData().get("listen") + ",";
-                if (listen.contains(",system,")) {
+                if (listen.contains("," + value + ",")) {
                     result.add(client);
                 }
             }
