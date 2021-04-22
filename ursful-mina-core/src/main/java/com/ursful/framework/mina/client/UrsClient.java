@@ -307,7 +307,7 @@ public class UrsClient implements Runnable{
                 logger.error("no host/port." + this.serverId);
                 return;
             }
-            if (connect(address)){
+            if (connect(address) || !this.autoConnected){
                 break;
             }else{
                 try {
