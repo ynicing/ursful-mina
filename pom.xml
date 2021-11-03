@@ -47,7 +47,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <ursful.mina.version>1.0-SNAPSHOT</ursful.mina.version>
-    <mina.version>2.0.13</mina.version>
+    <mina.version>2.1.5</mina.version>
     <mysql.version>5.1.38</mysql.version>
     <slf4j.version>1.7.7</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
